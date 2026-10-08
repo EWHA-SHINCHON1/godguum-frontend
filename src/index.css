@@ -1,111 +1,73 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+@import "tailwindcss";
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+/*
+ * 갓구움 디자인 토큰 (Figma 변수에서 옮김)
+ * 사용 예: bg-brand, text-fg-muted, border-line, text-head1 font-semibold
+ * 디자인 시스템 기준으로 작성
+ */
+@theme {
+  --font-sans:
+    "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, sans-serif;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* ---------- Color ---------- */
+  --color-brand: #f6c566; /* bg/brand/default, fg/brand/default */
+  --color-brand-nav: #f6c566f2; /* bg/brand/navigation bar (95%) */
+  --color-brand-subtle: #fbe8c2; /* bg/brand/subtle */
+  --color-brand-weak: #fdf3e0; /* Yellow/100 (비활성 칩·탭) */
+  --color-brand-strong: #f7a200; /* fg/brand/strong (D-day 등 강조 텍스트) */
+  --color-brand-contrast: #885300; /* fg/brand/contrast (로고·아이콘) */
+  --color-brand-surface: #fffdf7; /* bg/brand/main (모달 배경) */
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
+  --color-fg: #201f1a; /* fg/neutral/default */
+  --color-fg-muted: #868b94; /* fg/neutral/muted */
+  --color-fg-subtle: #8d94a3; /* fg/neutral/subtle */
+  --color-fg-disabled: #b0b3ba; /* Gray/500 */
+  --color-fg-inverse: #ffffff; /* fg/neutral/inverse */
+  --color-fg-info: #0d8a4e; /* fg/accent/info */
+
+  --color-surface: #ffffff; /* bg/neutral/default */
+  --color-surface-subtle: #f3f4f5; /* bg/neutral/subtle */
+  --color-line: #dcdee3; /* border/default */
+
+  /* ---------- Typography (size / line-height / letter-spacing) ---------- */
+  --text-head1: 20px;
+  --text-head1--line-height: 1.4;
+  --text-head1--letter-spacing: -0.1px;
+  --text-head2: 18px;
+  --text-head2--line-height: 1.4;
+  --text-head2--letter-spacing: -0.1px;
+  --text-body1: 16px;
+  --text-body1--line-height: 1.4; /* Body1/semibold 은 leading-[1.5] 추가 */
+  --text-body1--letter-spacing: -0.1px;
+  --text-button: 15px; /* ButtonLabel/large-md */
+  --text-button--line-height: 1.4;
+  --text-button--letter-spacing: -0.1px;
+  --text-body2: 14px;
+  --text-body2--line-height: 1.4;
+  --text-body2--letter-spacing: -0.1px;
+  --text-body3: 12px;
+  --text-body3--line-height: 1.4;
+  --text-body3--letter-spacing: -0.1px;
+  --text-caption1: 11px;
+  --text-caption1--line-height: 1.4;
+  --text-caption1--letter-spacing: -0.1px;
+
+  /* ---------- Radius ---------- */
+  --radius-md: 8px; /* radius/medium */
+  --radius-lg: 12px; /* radius/large */
+  --radius-xl: 16px; /* radius/extralarge */
+}
+
+@layer base {
+  html,
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-fg);
+    background: var(--color-surface);
+    -webkit-font-smoothing: antialiased;
   }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  button {
+    cursor: pointer;
   }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-body {
-  margin: 0;
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
 }
