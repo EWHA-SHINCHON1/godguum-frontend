@@ -1,12 +1,12 @@
-export { default as Button } from "./Button";
-export { default as Tag } from "./Tag";
-export { default as Bookmark } from "./Bookmark";
-export { default as SearchBar } from "./SearchBar";
-export { default as Header } from "./Header";
-export { default as IconButton } from "./IconButton";
-export { default as TopBar } from "./TopBar";
-export { default as GNB, NAV_ITEMS } from "./GNB";
-export { default as CouponIssueBar } from "./CouponIssueBar";
-export { default as SegmentedTabs } from "./SegmentedTabs";
-export { default as ConfirmModal } from "./ConfirmModal";
-export { cn } from "./cn";
+export { default as Button } from './Button'
+export { default as Tag } from './Tag'
+export { default as Bookmark } from './Bookmark'
+export { default as SearchBar } from './SearchBar'
+export { default as Header } from './Header'
+export { default as IconButton } from './IconButton'
+export { default as TopBar } from './TopBar'
+export { default as BottomNav, NAV_ITEMS } from './BottomNav'
+export { default as CouponIssueBar } from './CouponIssueBar'
+export { default as SegmentedTabs } from './SegmentedTabs'
+export { default as ConfirmModal } from './ConfirmModal'
+export { cn } from './cn'
