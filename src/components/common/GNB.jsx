@@ -21,7 +21,7 @@ export const NAV_ITEMS = [
   { key: "my", label: "마이", icon: myStroke, activeIcon: myFilled },
 ];
 
-export default function BottomNav({ active = "home", onChange, className }) {
+export default function GNB({ active = "home", onChange, className }) {
   return (
     <nav
       aria-label="하단 메뉴"
