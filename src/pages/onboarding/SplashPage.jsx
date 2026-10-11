@@ -1,10 +1,22 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import logo from "../../assets/icons/logo.svg";
 
 /**
  * 온보딩 진입 시 표시되는 스플래시 화면.
- * 화면 전환은 라우터가 연결되는 시점에 상위 흐름에서 담당한다.
+ * 일정 시간 후 홈 화면으로 이동한다.
  */
 function SplashPage() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigate("/home", { replace: true });
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [navigate]);
+
   return (
     <main
       className="flex min-h-dvh w-full items-center justify-center bg-brand"
