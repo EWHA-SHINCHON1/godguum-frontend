@@ -10,7 +10,7 @@ export default function TopBar({ onLogoClick, onBookmarkClick, className }) {
   return (
     <header
       className={cn(
-        "flex w-full items-center justify-between bg-surface px-5 py-3",
+        "flex w-full items-center justify-between bg-transparent px-5 py-3",
         className,
       )}
     >
