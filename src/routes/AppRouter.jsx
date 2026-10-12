@@ -24,6 +24,8 @@ export default function AppRouter() {
 
       <Route path="/owner/promotions" element={<OwnerPromotionPage />} />
 
+      <Route path="/owner/promotions" element={<OwnerPromotionPage />} />
+
       <Route
         path="/owner/promotions/:promotionId/performance"
         element={<OwnerPerformancePage />}
