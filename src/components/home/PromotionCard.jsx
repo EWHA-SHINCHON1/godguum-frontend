@@ -1,7 +1,7 @@
 import promotionImage from "../../assets/images/home/figma-raw-3.png";
 import { Bookmark } from "../common";
 
-export default function PromotionCard({ promotion }) {
+export default function PromotionCard({ promotion, onToggleSave }) {
   return (
     <article className="flex w-[110px] shrink-0 flex-col items-start gap-2">
       <div className="relative size-[110px] overflow-hidden rounded-md">
@@ -12,6 +12,7 @@ export default function PromotionCard({ promotion }) {
         />
 
         <Bookmark
+          onToggle={onToggleSave} // 북마크 접근 위해 onToggleSave 삽입
           saved={promotion.saved}
           className="absolute right-[5.5px] top-[5.5px] size-4"
         />

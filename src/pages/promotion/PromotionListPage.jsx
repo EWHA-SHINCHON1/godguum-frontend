@@ -3,26 +3,30 @@ import { useNavigate } from "react-router-dom";
 import { GNB, SearchBar, Tag, TopBar } from "../../components/common";
 import PromotionListCard from "../../components/promotion/PromotionListCard";
 import { MOCK_PROMOTIONS } from "../../mocks/promotions";
+import { useSavedPromotions } from "../../store/savedPromotions";
 
 const PROMOTION_FILTERS = ["전체", "진행중", "곧 시작", "오늘 마감"];
 
 export default function PromotionListPage() {
   const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState("전체");
-  const [promotions, setPromotions] = useState(MOCK_PROMOTIONS);
+  const { isSaved, setSaved } = useSavedPromotions();
 
   const filteredPromotions = useMemo(
-    () => promotions.filter((promotion) => activeFilter === "전체" || promotion.status === activeFilter),
-    [promotions, activeFilter],
+    () =>
+      MOCK_PROMOTIONS.filter(
+        (promotion) =>
+          activeFilter === "전체" || promotion.status === activeFilter,
+      ).map((promotion) => ({ ...promotion, saved: isSaved(promotion.id) })),
+    [activeFilter, isSaved],
   );
-
-  const toggleSave = (id, saved) => {
-    setPromotions((prev) => prev.map((promotion) => (promotion.id === id ? { ...promotion, saved } : promotion)));
-  };
 
   return (
     <main className="mx-auto min-h-dvh max-w-[402px] bg-brand-surface pb-28">
-      <TopBar onLogoClick={() => navigate("/home")} />
+      <TopBar
+        onLogoClick={() => navigate("/home")}
+        onBookmarkClick={() => navigate("/saved")}
+      />
 
       <div className="flex flex-col gap-4 px-5 pt-2">
         <SearchBar readOnly onClick={() => navigate("/search")} />
@@ -48,7 +52,7 @@ export default function PromotionListPage() {
                   <PromotionListCard
                     promotion={promotion}
                     onClick={() => navigate(`/promotions/${promotion.id}`)}
-                    onToggleSave={(saved) => toggleSave(promotion.id, saved)}
+                    onToggleSave={(saved) => setSaved(promotion.id, saved)}
                   />
                 </li>
               ))}
@@ -62,7 +66,10 @@ export default function PromotionListPage() {
       </div>
 
       <div className="pointer-events-none fixed inset-x-0 bottom-5 z-20 mx-auto w-[min(362px,calc(100%-40px))]">
-        <GNB active="promotion" className="pointer-events-auto shadow-[0_4px_12px_rgba(136,83,0,0.08)]" />
+        <GNB
+          active="promotion"
+          className="pointer-events-auto shadow-[0_4px_12px_rgba(136,83,0,0.08)]"
+        />
       </div>
     </main>
   );

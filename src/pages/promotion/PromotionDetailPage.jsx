@@ -7,6 +7,7 @@ import PromotionInfoTab from "../../components/promotion/PromotionInfoTab";
 import PromotionOverview from "../../components/promotion/PromotionOverview";
 import StoreStoryTab from "../../components/promotion/StoreStoryTab";
 import { getPromotionDetail } from "../../mocks/promotions";
+import { useSavedPromotions } from "../../store/savedPromotions";
 
 const DETAIL_TABS = [
   { value: "info", label: "프로모션 정보" },
@@ -16,14 +17,19 @@ const DETAIL_TABS = [
 export default function PromotionDetailPage() {
   const navigate = useNavigate();
   const { promotionId } = useParams();
-  const [promotion, setPromotion] = useState(() => getPromotionDetail(promotionId));
+  const { isSaved, setSaved } = useSavedPromotions();
+  const detail = getPromotionDetail(promotionId);
   const [activeTab, setActiveTab] = useState("info");
   const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
 
-  if (!promotion) {
+  if (!detail) {
     return (
       <main className="mx-auto min-h-dvh max-w-[402px] bg-brand-surface">
-        <Header title="프로모션" onBack={() => navigate(-1)} className="bg-transparent" />
+        <Header
+          title="프로모션"
+          onBack={() => navigate(-1)}
+          className="bg-transparent"
+        />
         <p className="py-20 text-center text-body2 font-medium text-fg-muted">
           프로모션을 찾을 수 없어요
         </p>
@@ -31,15 +37,21 @@ export default function PromotionDetailPage() {
     );
   }
 
+  const promotion = { ...detail, saved: isSaved(detail.id) };
+
   return (
     <main className="mx-auto min-h-dvh max-w-[402px] bg-brand-surface pb-[70px]">
-      <Header title="프로모션" onBack={() => navigate(-1)} className="bg-transparent" />
+      <Header
+        title="프로모션"
+        onBack={() => navigate(-1)}
+        className="bg-transparent"
+      />
 
       <PromotionOverview
         promotion={promotion}
         // TODO: 매장정보 화면 추가 후 연결
         onStoreClick={() => {}}
-        onToggleSave={(saved) => setPromotion((prev) => ({ ...prev, saved }))}
+        onToggleSave={(saved) => setSaved(promotion.id, saved)}
       />
 
       <PromotionDetailTabs
@@ -49,7 +61,11 @@ export default function PromotionDetailPage() {
         className="mt-2.5"
       />
 
-      <div role="tabpanel" id={`tabpanel-${activeTab}`} aria-labelledby={`tab-${activeTab}`}>
+      <div
+        role="tabpanel"
+        id={`tabpanel-${activeTab}`}
+        aria-labelledby={`tab-${activeTab}`}
+      >
         {activeTab === "info" ? (
           <PromotionInfoTab promotion={promotion} />
         ) : (

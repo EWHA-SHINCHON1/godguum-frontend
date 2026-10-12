@@ -14,7 +14,10 @@ export default function PromotionSection({
   showMore = false,
 }) {
   return (
-    <section className="flex flex-col gap-3" aria-labelledby={`${title}-heading`}>
+    <section
+      className="flex flex-col gap-3"
+      aria-labelledby={`${title}-heading`}
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1">
           {icon && (
@@ -38,7 +41,6 @@ export default function PromotionSection({
             className="flex h-6 items-center gap-1 text-body3 font-medium tracking-[-0.012px] text-fg-muted"
           >
             더보기
-
             <img
               src={chevronRightMuted}
               alt=""
@@ -65,7 +67,11 @@ export default function PromotionSection({
 
       <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {promotions.map((promotion) => (
-          <PromotionCard key={promotion.id} promotion={promotion} />
+          <PromotionCard
+            key={promotion.id}
+            promotion={promotion}
+            onToggleSave={(saved) => onToggleSave?.(promotion.id, saved)}
+          /> // 북마크 접근 위해 onToggleSave 삽입
         ))}
       </div>
     </section>

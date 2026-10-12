@@ -9,7 +9,12 @@ import { cn } from "./cn";
  * 카드 전체가 클릭 영역일 때 카드 이동이 같이 일어나지 않도록 전파를 막는다... 는데 이게 꼭 필요한가..?
  */
 
-export default function Bookmark({ saved = false, onToggle, className }) {
+export default function Bookmark({
+  saved = false,
+  onToggle,
+  size = 16,
+  className,
+}) {
   const handleClick = (e) => {
     e.stopPropagation(); // 클릭이 상위로 전달되는것을 막음
     e.preventDefault();
@@ -36,8 +41,8 @@ export default function Bookmark({ saved = false, onToggle, className }) {
       <img
         src={saved ? filledIcon : outlineIcon}
         alt=""
-        width={16}
-        height={16}
+        width={size}
+        height={size}
       />
     </button>
   );

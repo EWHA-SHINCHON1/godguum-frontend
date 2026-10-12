@@ -52,7 +52,7 @@ export default function GNB({ active = "home", onChange, className }) {
     <nav
       aria-label="하단 메뉴"
       className={cn(
-        "flex w-full items-center justify-between rounded-full bg-brand-nav px-8 py-3",
+        "flex w-full items-center justify-center gap-[71px] rounded-full bg-brand-nav px-8 py-3",
         className,
       )}
     >
