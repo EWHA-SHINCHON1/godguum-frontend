@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import logo from "../../assets/icons/logo.svg";
 import { Tag } from "../../components/common";
 import OwnerPromotionCard from "../../components/owner/OwnerPromotionCard";
@@ -25,6 +26,7 @@ const PROMOTIONS = [
 ];
 
 export default function OwnerPromotionPage({ ownerName = "무시무시" }) {
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState("전체");
   const displayedPromotions = useMemo(
     () => PROMOTIONS.filter((promotion) => activeFilter === "전체" || promotion.status === activeFilter),
@@ -78,7 +80,7 @@ export default function OwnerPromotionPage({ ownerName = "무시무시" }) {
               <OwnerPromotionCard
                 key={promotion.id}
                 promotion={promotion}
-                onClick={() => {}}
+                onClick={() => navigate(`/owner/promotions/${promotion.id}/performance`)}
               />
             ))}
           </div>

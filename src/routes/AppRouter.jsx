@@ -1,0 +1,29 @@
+import { Route, Routes } from "react-router-dom";
+
+import SplashPage from "../pages/onboarding/SplashPage";
+import HomePage from "../pages/home/HomePage";
+import LoginPage from "../pages/onboarding/LoginPage";
+import SearchPage from "../pages/search/SearchPage";
+import OwnerPromotionPage from "../pages/owner/OwnerPromotionPage";
+import OwnerPerformancePage from "../pages/owner/OwnerPerformancePage";
+
+export default function AppRouter() {
+  return (
+    <Routes>
+      <Route path="/" element={<SplashPage />} />
+      <Route path="/home" element={<HomePage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/search" element={<SearchPage />} />
+
+      <Route
+        path="/owner/promotions"
+        element={<OwnerPromotionPage />}
+      />
+
+      <Route
+        path="/owner/promotions/:promotionId/performance"
+        element={<OwnerPerformancePage />}
+      />
+    </Routes>
+  );
+}

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { GNB, SearchBar, TopBar } from "../../components/common";
 import MainPromotionBanner from "../../components/home/MainPromotionBanner";
 import PromotionSection from "../../components/home/PromotionSection";
@@ -22,6 +23,7 @@ const TRENDING_PROMOTIONS = [
 ];
 
 export default function HomePage() {
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState("전체");
   const todayPromotions = useMemo(
     () => TODAY_PROMOTIONS.filter((promotion) => activeFilter === "전체" || promotion.status === activeFilter),
@@ -32,7 +34,10 @@ export default function HomePage() {
     <main className="mx-auto min-h-dvh max-w-[402px] bg-brand-surface pb-28">
       <TopBar />
       <div className="px-5 pt-[7px]">
-        <SearchBar readOnly />
+        <SearchBar 
+          readOnly
+          onClick={() => navigate("/search")} 
+        />
       </div>
       <div className="mt-5">
         <MainPromotionBanner />
