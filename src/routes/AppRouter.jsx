@@ -5,9 +5,10 @@ import HomePage from "../pages/home/HomePage";
 import LoginPage from "../pages/onboarding/LoginPage";
 import SearchPage from "../pages/search/SearchPage";
 import PromotionListPage from "../pages/promotion/PromotionListPage";
+import PromotionDetailPage from "../pages/promotion/PromotionDetailPage";
 import OwnerPromotionPage from "../pages/owner/OwnerPromotionPage";
 import OwnerPerformancePage from "../pages/owner/OwnerPerformancePage";
-
+import SavedPromotionsPage from "../pages/bookmark/SavedPromotionsPage";
 export default function AppRouter() {
   return (
     <Routes>
@@ -16,6 +17,12 @@ export default function AppRouter() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/search" element={<SearchPage />} />
       <Route path="/promotions" element={<PromotionListPage />} />
+      <Route
+        path="/promotions/:promotionId"
+        element={<PromotionDetailPage />}
+      />
+
+      <Route path="/owner/promotions" element={<OwnerPromotionPage />} />
 
       <Route path="/owner/promotions" element={<OwnerPromotionPage />} />
 
@@ -23,6 +30,7 @@ export default function AppRouter() {
         path="/owner/promotions/:promotionId/performance"
         element={<OwnerPerformancePage />}
       />
+      <Route path="/saved" element={<SavedPromotionsPage />} />
     </Routes>
   );
 }
