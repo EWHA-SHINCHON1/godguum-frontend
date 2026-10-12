@@ -4,6 +4,7 @@ import SplashPage from "../pages/onboarding/SplashPage";
 import HomePage from "../pages/home/HomePage";
 import LoginPage from "../pages/onboarding/LoginPage";
 import SearchPage from "../pages/search/SearchPage";
+import PromotionListPage from "../pages/promotion/PromotionListPage";
 import OwnerPromotionPage from "../pages/owner/OwnerPromotionPage";
 import OwnerPerformancePage from "../pages/owner/OwnerPerformancePage";
 
@@ -14,11 +15,9 @@ export default function AppRouter() {
       <Route path="/home" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/search" element={<SearchPage />} />
+      <Route path="/promotions" element={<PromotionListPage />} />
 
-      <Route
-        path="/owner/promotions"
-        element={<OwnerPromotionPage />}
-      />
+      <Route path="/owner/promotions" element={<OwnerPromotionPage />} />
 
       <Route
         path="/owner/promotions/:promotionId/performance"
