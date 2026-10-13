@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import promotionImage from "../../assets/images/owner/owner-performance-promotion.png";
 import externalClicksIcon from "../../assets/icons/owner/performance-external-clicks.svg";
 import couponsIcon from "../../assets/icons/owner/performance-coupons.svg";
+import infoIcon from "../../assets/icons/owner/performance-info.svg";
 import viewsIcon from "../../assets/icons/owner/performance-views.svg";
 import storeForwardIcon from "../../assets/icons/owner/owner-store-forward.svg";
 import { Header } from "../../components/common";
@@ -74,6 +75,10 @@ export default function OwnerPerformancePage() {
             />
           ))}
         </section>
+        <p className="mt-5 flex items-center justify-center gap-[3px] text-caption1 font-normal tracking-[-0.011px] whitespace-nowrap text-fg-muted">
+          <img src={infoIcon} alt="" width={15} height={15} />
+          외부 채널 클릭 수는 매장의 인스타그램·네이버 링크를 클릭한 횟수입니다.
+        </p>
       </div>
     </main>
   );
