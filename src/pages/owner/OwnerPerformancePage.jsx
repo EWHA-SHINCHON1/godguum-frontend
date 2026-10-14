@@ -34,7 +34,7 @@ export default function OwnerPerformancePage() {
   const navigate = useNavigate();
 
   return (
-    <main className="mx-auto min-h-dvh max-w-[402px] bg-brand-surface">
+    <main className="mx-auto min-h-dvh w-full max-w-[402px] bg-brand-surface">
       <Header
         title="프로모션 성과"
         onBack={() => navigate(-1)}

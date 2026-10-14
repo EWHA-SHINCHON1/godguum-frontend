@@ -34,7 +34,7 @@ export default function OwnerPromotionPage({ ownerName = "무시무시" }) {
   );
 
   return (
-    <main className="relative mx-auto min-h-dvh max-w-[402px] bg-brand-surface">
+    <main className="relative mx-auto min-h-dvh w-full max-w-[402px] bg-brand-surface">
       <header className="flex items-start px-6 pt-[9px]">
         <img
           src={logo}
