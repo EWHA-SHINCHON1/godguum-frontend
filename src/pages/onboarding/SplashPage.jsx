@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/icons/logo.svg";
+import { getMe } from "../../api/auth";
 
 /**
  * 온보딩 진입 시 표시되는 스플래시 화면.
@@ -10,16 +11,27 @@ function SplashPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      navigate("/home", { replace: true });
-    }, 1500);
+    let isMounted = true;
+    let timer;
+    const minimumDisplayTime = new Promise((resolve) => {
+      timer = setTimeout(resolve, 1500);
+    });
 
-    return () => clearTimeout(timer);
+    Promise.all([getMe().catch(() => null), minimumDisplayTime]).then(() => {
+      if (isMounted) {
+        navigate("/home", { replace: true });
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
   }, [navigate]);
 
   return (
     <main
-      className="flex min-h-dvh w-full items-center justify-center bg-brand"
+      className="flex mx-auto min-h-dvh w-full max-w-[402px] items-center justify-center bg-brand"
       aria-label="갓구움 시작 화면"
     >
       <img

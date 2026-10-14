@@ -1,7 +1,18 @@
 import { Button } from "../../components/common";
+import { useSearchParams } from "react-router-dom";
 import logo from "../../assets/icons/logo.svg";
 import loginCharacter from "../../assets/icons/login-character.svg";
 import kakaoIcon from "../../assets/icons/kakao.svg";
+import { startKakaoLogin } from "../../api/auth";
+
+const loginErrorMessages = {
+  LOGIN_CANCELLED: "로그인이 취소되었습니다.",
+  INVALID_STATE: "로그인 시간이 만료되었습니다. 다시 시도해 주세요.",
+  INVALID_REQUEST: "다시 로그인해 주세요.",
+  KAKAO_AUTH_FAILED: "로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+  KAKAO_NOT_CONFIGURED: "로그인을 사용할 수 없습니다. 운영팀에 문의해 주세요.",
+  INACTIVE_USER: "이용이 제한된 계정입니다.",
+};
 
 function KakaoMark() {
   return (
@@ -11,14 +22,19 @@ function KakaoMark() {
   );
 }
 
-/** 로그인 시작 화면. 카카오 인증 연결은 상위 인증 흐름에서 담당한다. */
 function LoginPage() {
+  const [searchParams] = useSearchParams();
+  const errorCode = searchParams.get("error");
+  const errorMessage = searchParams.has("error")
+    ? loginErrorMessages[errorCode] || "로그인에 실패했습니다. 다시 시도해 주세요."
+    : null;
+
   const handleKakaoLogin = () => {
-    // TODO: 카카오 OAuth 연결 시 인증 시작 로직을 추가한다.
+    startKakaoLogin("/");
   };
 
   return (
-    <main className="relative mx-auto h-[874px] w-full max-w-[402px] overflow-hidden bg-[#fffdf7]">
+    <main className="relative mx-auto min-h-dvh w-full max-w-[402px] overflow-hidden bg-[#fffdf7]">
       <section className="flex flex-col items-center pt-[204px] text-center">
         <img src={logo} alt="갓구움" width={128} height={68} className="h-auto w-32" />
         <p className="mt-5 w-[150px] text-center text-[16px] font-medium leading-[140%] tracking-[-0.016px] text-[#885300]">
@@ -49,6 +65,14 @@ function LoginPage() {
       <p className="absolute left-0 top-[705px] w-full text-center text-body2 font-medium text-fg-muted">
         간단하게 시작해보세요!
       </p>
+      {errorMessage && (
+        <p
+          role="alert"
+          className="absolute left-0 top-[737px] w-full px-8 text-center text-body2 font-medium text-red-500"
+        >
+          {errorMessage}
+        </p>
+      )}
     </main>
   );
 }
