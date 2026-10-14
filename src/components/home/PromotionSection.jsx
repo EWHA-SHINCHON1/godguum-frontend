@@ -2,7 +2,6 @@ import PromotionCard from "./PromotionCard";
 import { Tag } from "../common";
 import { cn } from "../common/cn";
 import chevronRightMuted from "../../assets/icons/chevron-right-muted.svg";
-import { useNavigate } from "react-router-dom";
 
 export default function PromotionSection({
   title,
@@ -13,8 +12,10 @@ export default function PromotionSection({
   activeFilter,
   onFilterChange,
   showMore = false,
+  onMoreClick, // [변경] 추가: 더보기 클릭 시 실행 (홈 → /promotions 이동)
+  onPromotionClick, // [변경] 추가: 카드 클릭 시 실행 (홈 → /promotions/:id 상세 이동)
+  onToggleSave, // [변경] 추가: 기존엔 props로 안 받아서 북마크가 동작하지 않던 버그 수정
 }) {
-  const navigate = useNavigate();
   return (
     <section
       className="flex flex-col gap-3"
@@ -40,8 +41,8 @@ export default function PromotionSection({
         {showMore && (
           <button
             type="button"
+            onClick={onMoreClick} // [변경] 추가: 더보기 버튼 클릭 연결
             className="flex h-6 items-center gap-1 text-body3 font-medium tracking-[-0.012px] text-fg-muted"
-            onClick={() => navigate("/promotions")} //프로모션 화면으로 가기 위해 추가
           >
             더보기
             <img
@@ -73,8 +74,9 @@ export default function PromotionSection({
           <PromotionCard
             key={promotion.id}
             promotion={promotion}
+            onClick={() => onPromotionClick?.(promotion.id)} // [변경] 추가: 카드 클릭 시 해당 id 전달
             onToggleSave={(saved) => onToggleSave?.(promotion.id, saved)}
-          /> // 북마크 접근 위해 onToggleSave 삽입
+          />
         ))}
       </div>
     </section>
