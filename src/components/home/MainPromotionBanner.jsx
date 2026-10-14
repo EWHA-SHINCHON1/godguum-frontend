@@ -1,9 +1,14 @@
 import bannerImage from "../../assets/images/home/figma-raw-2.png";
 import chevronRight from "../../assets/icons/chevron-right.svg";
 
-export default function MainPromotionBanner() {
+// [변경] props 추가: promotion(배너에 연결할 mock 프로모션), onClick(배너 클릭 시 상세 이동)
+export default function MainPromotionBanner({ promotion, onClick }) {
   return (
-    <section className="relative h-[180px] overflow-hidden" aria-label="대표 프로모션">
+    <section
+      onClick={onClick} // [변경] 추가: 배너 전체 클릭(“지금 쿠폰 받기” 버튼 포함) 시 상세 이동
+      className={`relative h-[180px] overflow-hidden${onClick ? " cursor-pointer" : ""}`} // [변경] 클릭 가능할 때 포인터 커서
+      aria-label="대표 프로모션"
+    >
       <img
         src={bannerImage}
         alt="갓 구운 마들렌"
@@ -23,7 +28,8 @@ export default function MainPromotionBanner() {
           달달하게
         </h1>
         <p className="mt-2 text-body3 font-medium tracking-[-0.012px] text-black">
-          카페 올베르
+          {/* [변경] 하드코딩된 "카페 올베르" → mock 데이터의 storeName 사용 (없으면 기존 문구) */}
+          {promotion?.storeName ?? "카페 올베르"}
         </p>
         <button
           type="button"
