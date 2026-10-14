@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/icons/logo.svg";
+import { getMe } from "../../api/auth";
 
 /**
  * 온보딩 진입 시 표시되는 스플래시 화면.
@@ -10,11 +11,22 @@ function SplashPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      navigate("/home", { replace: true });
-    }, 1500);
+    let isMounted = true;
+    let timer;
+    const minimumDisplayTime = new Promise((resolve) => {
+      timer = setTimeout(resolve, 1500);
+    });
 
-    return () => clearTimeout(timer);
+    Promise.all([getMe().catch(() => null), minimumDisplayTime]).then(() => {
+      if (isMounted) {
+        navigate("/home", { replace: true });
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
   }, [navigate]);
 
   return (
