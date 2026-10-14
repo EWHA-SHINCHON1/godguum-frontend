@@ -27,11 +27,11 @@ export const NAV_ITEMS = [
     icon: promotionStroke,
     activeIcon: promotionFilled,
   },
-  // TODO: 마이 화면 추가 후 path 연결
+  // TODO: 마이 화면 추가 후 path 연결 - 완료
   {
     key: "my",
     label: "마이",
-    path: null,
+    path: "/my",
     icon: myStroke,
     activeIcon: myFilled,
   },

@@ -9,6 +9,10 @@ import PromotionDetailPage from "../pages/promotion/PromotionDetailPage";
 import OwnerPromotionPage from "../pages/owner/OwnerPromotionPage";
 import OwnerPerformancePage from "../pages/owner/OwnerPerformancePage";
 import SavedPromotionsPage from "../pages/bookmark/SavedPromotionsPage";
+import MyPage from "../pages/my/MyPage";
+import MyHistory from "../pages/my/MyHistory";
+import MyCoupon from "../pages/my/MyCoupon";
+import MyCouponUse from "../pages/my/MyCouponUse";
 export default function AppRouter() {
   return (
     <Routes>
@@ -24,12 +28,16 @@ export default function AppRouter() {
 
       <Route path="/owner/promotions" element={<OwnerPromotionPage />} />
 
-      <Route path="/owner/promotions" element={<OwnerPromotionPage />} />
-
       <Route
         path="/owner/promotions/:promotionId/performance"
         element={<OwnerPerformancePage />}
       />
+
+      <Route path="/my" element={<MyPage />} />
+      <Route path="/my/history" element={<MyHistory />} />
+      <Route path="/my/coupons" element={<MyCoupon />} />
+      <Route path="/my/coupons/:couponId/use" element={<MyCouponUse />} />
+
       <Route path="/saved" element={<SavedPromotionsPage />} />
     </Routes>
   );
