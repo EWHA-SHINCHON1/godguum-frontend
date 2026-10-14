@@ -31,7 +31,7 @@ export default function HomePage() {
   );
 
   return (
-    <main className="mx-auto min-h-dvh max-w-[402px] bg-brand-surface pb-28">
+    <main className="mx-auto min-h-dvh w-full max-w-[402px] bg-brand-surface pb-28">
       <TopBar />
       <div className="px-5 pt-[7px]">
         <SearchBar 

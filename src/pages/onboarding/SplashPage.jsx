@@ -19,7 +19,7 @@ function SplashPage() {
 
   return (
     <main
-      className="flex min-h-dvh w-full items-center justify-center bg-brand"
+      className="flex mx-auto min-h-dvh w-full max-w-[402px] items-center justify-center bg-brand"
       aria-label="갓구움 시작 화면"
     >
       <img

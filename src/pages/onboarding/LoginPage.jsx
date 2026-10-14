@@ -18,7 +18,7 @@ function LoginPage() {
   };
 
   return (
-    <main className="relative mx-auto h-[874px] w-full max-w-[402px] overflow-hidden bg-[#fffdf7]">
+    <main className="relative mx-auto min-h-dvh w-full max-w-[402px] overflow-hidden bg-[#fffdf7]">
       <section className="flex flex-col items-center pt-[204px] text-center">
         <img src={logo} alt="갓구움" width={128} height={68} className="h-auto w-32" />
         <p className="mt-5 w-[150px] text-center text-[16px] font-medium leading-[140%] tracking-[-0.016px] text-[#885300]">
