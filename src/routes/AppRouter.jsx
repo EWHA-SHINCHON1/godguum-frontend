@@ -6,6 +6,7 @@ import LoginPage from "../pages/onboarding/LoginPage";
 import SearchPage from "../pages/search/SearchPage";
 import PromotionListPage from "../pages/promotion/PromotionListPage";
 import PromotionDetailPage from "../pages/promotion/PromotionDetailPage";
+import OwnerEntryPage from "../pages/owner/OwnerEntryPage";
 import OwnerPromotionPage from "../pages/owner/OwnerPromotionPage";
 import OwnerPerformancePage from "../pages/owner/OwnerPerformancePage";
 import SavedPromotionsPage from "../pages/bookmark/SavedPromotionsPage";
@@ -26,6 +27,7 @@ export default function AppRouter() {
         element={<PromotionDetailPage />}
       />
 
+      <Route path="/owner" element={<OwnerEntryPage />} />
       <Route path="/owner/promotions" element={<OwnerPromotionPage />} />
 
       <Route
