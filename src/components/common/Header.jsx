@@ -1,5 +1,5 @@
-import chevronLeft from '../../assets/icons/chevron-left.svg'
-import { cn } from './cn'
+import chevronLeft from "../../assets/icons/chevron-left.svg";
+import { cn } from "./cn";
 
 /**
  * 서브 화면 헤더 (Figma: 헤더)
@@ -8,10 +8,29 @@ import { cn } from './cn'
  *  <Header title="매장 정보" onBack={...} />
  *  <Header onBack={...} right={<HeaderBookmarkButton />} />   // Type=저장만
  *  <Header onBack={...} />                                    // Type=none
+ * 
+ * 
+title	문자열	가운데 제목
+onBack	함수	뒤로가기 버튼을 눌렀을 때 실행할 함수
+showBack	boolean	뒤로가기 버튼을 보일지 여부 (기본 true)
+right	JSX	오른쪽 칸에 넣을 내용
+className	문자열	바깥에서 스타일을 덧붙이거나 덮어쓸 때 사용
+
  */
-export default function Header({ title, onBack, showBack = true, right, className }) {
+export default function Header({
+  title,
+  onBack,
+  showBack = true,
+  right,
+  className,
+}) {
   return (
-    <header className={cn('relative flex h-[60px] w-full items-center justify-between bg-surface px-5', className)}>
+    <header
+      className={cn(
+        "relative flex h-[60px] w-full items-center justify-between bg-surface px-5",
+        className,
+      )}
+    >
       {showBack ? (
         <button
           type="button"
@@ -33,5 +52,5 @@ export default function Header({ title, onBack, showBack = true, right, classNam
 
       <div className="flex min-w-6 items-center justify-end gap-3">{right}</div>
     </header>
-  )
+  );
 }
