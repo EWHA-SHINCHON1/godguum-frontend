@@ -6,8 +6,14 @@ import PromotionListCard from "../promotion/PromotionListCard";
  * 왼쪽 정보 영역은 PromotionListCard 를 그대로 쓰고, 상태별 오른쪽 버튼·딤 처리만 더한다.
  */
 const ACTIONS = {
-  available: { label: "사용하기", className: "bg-brand-weak text-brand-strong" },
-  used: { label: "사용완료", className: "cursor-default bg-surface-subtle text-fg-muted" },
+  available: {
+    label: "사용하기",
+    className: "bg-brand-weak text-brand-strong",
+  },
+  used: {
+    label: "사용완료",
+    className: "cursor-default bg-surface-subtle text-fg-muted",
+  },
 };
 
 export default function CouponCard({ coupon, onClick, onUse }) {

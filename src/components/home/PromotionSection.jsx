@@ -2,6 +2,7 @@ import PromotionCard from "./PromotionCard";
 import { Tag } from "../common";
 import { cn } from "../common/cn";
 import chevronRightMuted from "../../assets/icons/chevron-right-muted.svg";
+import { useNavigate } from "react-router-dom";
 
 export default function PromotionSection({
   title,
@@ -13,6 +14,7 @@ export default function PromotionSection({
   onFilterChange,
   showMore = false,
 }) {
+  const navigate = useNavigate();
   return (
     <section
       className="flex flex-col gap-3"
@@ -39,6 +41,7 @@ export default function PromotionSection({
           <button
             type="button"
             className="flex h-6 items-center gap-1 text-body3 font-medium tracking-[-0.012px] text-fg-muted"
+            onClick={() => navigate("/promotions")} //프로모션 화면으로 가기 위해 추가
           >
             더보기
             <img

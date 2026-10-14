@@ -12,7 +12,7 @@ const CODE_LENGTH = 4;
  */
 export default function MyCouponUse() {
   const navigate = useNavigate();
-  const { couponId } = useParams();
+  const { couponId } = useParams(); // URL의 :couponId (예: "101") 가져옴
   const coupon = getCoupon(couponId);
   const inputRef = useRef(null);
   const [code, setCode] = useState("");
@@ -34,7 +34,11 @@ export default function MyCouponUse() {
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-[402px] flex-col bg-brand-surface">
-      <Header title="쿠폰 사용하기" onBack={() => navigate(-1)} className="bg-brand-surface" />
+      <Header
+        title="쿠폰 사용하기"
+        onBack={() => navigate(-1)}
+        className="bg-brand-surface"
+      />
 
       <section className="flex flex-1 flex-col items-center gap-8 bg-brand-weak px-5 pt-[clamp(66px,20dvh,176px)]">
         <div className="flex flex-col items-center gap-4">
@@ -50,7 +54,8 @@ export default function MyCouponUse() {
         <label className="relative flex items-center gap-2">
           <span className="sr-only">확인코드 {CODE_LENGTH}자리</span>
           {Array.from({ length: CODE_LENGTH }, (_, index) => {
-            const active = focused && index === Math.min(code.length, CODE_LENGTH - 1);
+            const active =
+              focused && index === Math.min(code.length, CODE_LENGTH - 1);
             return (
               <span
                 key={index}

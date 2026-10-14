@@ -8,20 +8,14 @@ import { cn } from "./cn";
  *  <Header title="매장 정보" onBack={...} />
  *  <Header onBack={...} right={<HeaderBookmarkButton />} />   // Type=저장만
  *  <Header onBack={...} />                                    // Type=none
- * 
- * 
-title	문자열	가운데 제목
-onBack	함수	뒤로가기 버튼을 눌렀을 때 실행할 함수
-showBack	boolean	뒤로가기 버튼을 보일지 여부 (기본 true)
-right	JSX	오른쪽 칸에 넣을 내용
-className	문자열	바깥에서 스타일을 덧붙이거나 덮어쓸 때 사용
-
+ *
  */
+
 export default function Header({
-  title,
-  onBack,
-  showBack = true,
-  right,
+  title, // 문자열 가운데 제목
+  onBack, // 뒤로가기 버튼을 눌렀을 때 실행할 함수
+  showBack = true, // boolean	뒤로가기 버튼을 보일지 여부 (기본 true)
+  right, // JSX	오른쪽 칸에 넣을 내용
   className,
 }) {
   return (
@@ -44,6 +38,7 @@ export default function Header({
         <span className="size-6" />
       )}
 
+      {/*true일 때만 JSX를 화면에 보여주고, 거짓(false)일 때는 아무것도 보여주지 않음*/}
       {title && (
         <h1 className="pointer-events-none absolute left-1/2 -translate-x-1/2 text-head1 font-semibold whitespace-nowrap text-fg">
           {title}
