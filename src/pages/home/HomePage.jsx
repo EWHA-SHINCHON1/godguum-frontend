@@ -1,60 +1,164 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GNB, SearchBar, TopBar } from "../../components/common";
 import MainPromotionBanner from "../../components/home/MainPromotionBanner";
 import PromotionSection from "../../components/home/PromotionSection";
-import { MOCK_PROMOTIONS } from "../../mocks/promotions"; // [변경] 추가: 프로모션 목록 페이지와 같은 mock 사용
-import { useSavedPromotions } from "../../store/savedPromotions"; // [변경] 추가: 저장 상태를 다른 화면과 공유
+import { getPromotions } from "../../api/promotions";
+import { useSavedPromotions } from "../../store/savedPromotions";
 import todayPromotionIcon from "../../assets/icons/promotion-today.svg";
 import trendingFireIcon from "../../assets/icons/trending-fire.svg";
 
 const TODAY_FILTERS = ["전체", "진행중", "곧 시작", "오늘 마감"];
+const TODAY_FILTER_PARAMS = {
+  전체: {},
+  진행중: { status: "active" },
+  "곧 시작": { status: "upcoming" },
+  "오늘 마감": { status: "active", closing_today: true },
+};
 
-// [변경] 삭제: 홈 전용 하드코딩 데이터 TODAY_PROMOTIONS, TRENDING_PROMOTIONS
-//        → MOCK_PROMOTIONS 로 대체
+const seoulDateFormatter = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Asia/Seoul",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
 
-// [변경] 추가
-// TODO: API 연동 전까지 홈 노출 프로모션은 MOCK_PROMOTIONS 에서 id 로 골라서 사용
-const MAIN_BANNER_PROMOTION_ID = 6; // 카페 올베르 · 수업 끝나고 달달하게
-const TRENDING_PROMOTION_IDS = [2, 7, 5, 1];
+function getSeoulDayValue(date) {
+  const parts = seoulDateFormatter.formatToParts(date);
+  const values = Object.fromEntries(
+    parts
+      .filter((part) => part.type !== "literal")
+      .map((part) => [part.type, Number(part.value)]),
+  );
+
+  return Date.UTC(values.year, values.month - 1, values.day);
+}
+
+function getDday(endsAt) {
+  const endDate = new Date(endsAt);
+
+  if (!endsAt || Number.isNaN(endDate.getTime())) {
+    return "";
+  }
+
+  const remainingDays = Math.round(
+    (getSeoulDayValue(endDate) - getSeoulDayValue(new Date())) /
+      (1000 * 60 * 60 * 24),
+  );
+
+  return remainingDays <= 0 ? "D-DAY" : `D-${remainingDays}`;
+}
+
+function toCardPromotion(promotion, isSaved) {
+  return {
+    id: promotion.id,
+    storeName: promotion.store?.name || "",
+    title: promotion.title || promotion.benefit || "",
+    benefit: promotion.benefit || "",
+    image: promotion.image_url || undefined,
+    dDay: getDday(promotion.ends_at),
+    saved: isSaved(promotion.id),
+  };
+}
+
+function PromotionStateMessage({ loading, error, isEmpty }) {
+  if (!loading && !error && !isEmpty) {
+    return null;
+  }
+
+  const message = loading
+    ? "프로모션을 불러오는 중입니다."
+    : error
+      ? "프로모션을 불러오지 못했습니다."
+      : "표시할 프로모션이 없어요.";
+
+  return (
+    <p className="py-2 text-body3 font-medium text-fg-muted">{message}</p>
+  );
+}
 
 export default function HomePage() {
   const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState("전체");
-  const { isSaved, setSaved } = useSavedPromotions(); // [변경] 추가
+  const [todayState, setTodayState] = useState({
+    results: [],
+    loading: true,
+    error: false,
+  });
+  const [trendingState, setTrendingState] = useState({
+    results: [],
+    loading: true,
+    error: false,
+  });
+  const { isSaved, setSaved } = useSavedPromotions();
 
-  // [변경] TODAY_PROMOTIONS → MOCK_PROMOTIONS 필터링 + 저장 상태(saved) 반영
+  useEffect(() => {
+    let isCurrent = true;
+
+    getPromotions(TODAY_FILTER_PARAMS[activeFilter])
+      .then((response) => {
+        if (isCurrent) {
+          setTodayState({
+            results: Array.isArray(response?.results) ? response.results : [],
+            loading: false,
+            error: false,
+          });
+        }
+      })
+      .catch(() => {
+        if (isCurrent) {
+          setTodayState({ results: [], loading: false, error: true });
+        }
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [activeFilter]);
+
+  useEffect(() => {
+    let isCurrent = true;
+
+    getPromotions({ featured: true })
+      .then((response) => {
+        if (isCurrent) {
+          setTrendingState({
+            results: Array.isArray(response?.results) ? response.results : [],
+            loading: false,
+            error: false,
+          });
+        }
+      })
+      .catch(() => {
+        if (isCurrent) {
+          setTrendingState({ results: [], loading: false, error: true });
+        }
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
+
   const todayPromotions = useMemo(
-    () =>
-      MOCK_PROMOTIONS.filter(
-        (promotion) =>
-          activeFilter === "전체" || promotion.status === activeFilter,
-      ).map((promotion) => ({ ...promotion, saved: isSaved(promotion.id) })),
-    [activeFilter, isSaved],
+    () => todayState.results.map((promotion) => toCardPromotion(promotion, isSaved)),
+    [todayState.results, isSaved],
   );
 
-  // [변경] 추가: 지금 뜨는 프로모션 = TRENDING_PROMOTION_IDS 순서대로 MOCK_PROMOTIONS 에서 꺼냄
   const trendingPromotions = useMemo(
-    () =>
-      TRENDING_PROMOTION_IDS.map((id) =>
-        MOCK_PROMOTIONS.find((promotion) => promotion.id === id),
-      )
-        .filter(Boolean)
-        .map((promotion) => ({ ...promotion, saved: isSaved(promotion.id) })),
-    [isSaved],
+    () => trendingState.results.map((promotion) => toCardPromotion(promotion, isSaved)),
+    [trendingState.results, isSaved],
   );
 
-  // [변경] 추가: 대표 배너에 연결할 프로모션
-  const bannerPromotion = MOCK_PROMOTIONS.find(
-    (promotion) => promotion.id === MAIN_BANNER_PROMOTION_ID,
-  );
-
-  // [변경] 추가: 상세 화면 이동 (PromotionListPage 와 같은 경로)
+  const bannerPromotion = trendingPromotions[0];
   const goToDetail = (id) => navigate(`/promotions/${id}`);
+  const handleFilterChange = (filter) => {
+    setActiveFilter(filter);
+    setTodayState({ results: [], loading: true, error: false });
+  };
 
   return (
     <main className="mx-auto min-h-dvh max-w-[402px] bg-brand-surface pb-28">
-      {/* [변경] 로고 → /home, 북마크 → /saved 연결 (목록 페이지와 동일) */}
       <TopBar
         onLogoClick={() => navigate("/home")}
         onBookmarkClick={() => navigate("/saved")}
@@ -63,7 +167,6 @@ export default function HomePage() {
         <SearchBar readOnly onClick={() => navigate("/search")} />
       </div>
       <div className="mt-5">
-        {/* [변경] promotion, onClick 전달 → 배너 클릭 시 /promotions/6 */}
         <MainPromotionBanner
           promotion={bannerPromotion}
           onClick={
@@ -79,19 +182,29 @@ export default function HomePage() {
           promotions={todayPromotions}
           filters={TODAY_FILTERS}
           activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
+          onFilterChange={handleFilterChange}
           showMore
-          onMoreClick={() => navigate("/promotions")} // [변경] 추가: 더보기 → 전체 목록
-          onPromotionClick={goToDetail} // [변경] 추가: 카드 → 상세
-          onToggleSave={setSaved} // [변경] 추가: 북마크 저장/취소
+          onMoreClick={() => navigate("/promotions")}
+          onPromotionClick={goToDetail}
+          onToggleSave={setSaved}
+        />
+        <PromotionStateMessage
+          loading={todayState.loading}
+          error={todayState.error}
+          isEmpty={todayPromotions.length === 0}
         />
         <PromotionSection
           title="지금 뜨는 프로모션"
           icon={trendingFireIcon}
           iconClassName="h-[19.763px] w-[18px]"
-          promotions={trendingPromotions} // [변경] TRENDING_PROMOTIONS → trendingPromotions
-          onPromotionClick={goToDetail} // [변경] 추가: 카드 → 상세
-          onToggleSave={setSaved} // [변경] 추가: 북마크 저장/취소
+          promotions={trendingPromotions}
+          onPromotionClick={goToDetail}
+          onToggleSave={setSaved}
+        />
+        <PromotionStateMessage
+          loading={trendingState.loading}
+          error={trendingState.error}
+          isEmpty={trendingPromotions.length === 0}
         />
       </div>
       <div className="pointer-events-none fixed inset-x-0 bottom-5 z-20 mx-auto w-[min(362px,calc(100%-40px))]">

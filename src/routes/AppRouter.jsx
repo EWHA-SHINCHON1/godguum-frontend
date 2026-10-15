@@ -6,9 +6,11 @@ import LoginPage from "../pages/onboarding/LoginPage";
 import SearchPage from "../pages/search/SearchPage";
 import PromotionListPage from "../pages/promotion/PromotionListPage";
 import PromotionDetailPage from "../pages/promotion/PromotionDetailPage";
+import OwnerEntryPage from "../pages/owner/OwnerEntryPage";
 import OwnerPromotionPage from "../pages/owner/OwnerPromotionPage";
 import OwnerPerformancePage from "../pages/owner/OwnerPerformancePage";
 import SavedPromotionsPage from "../pages/bookmark/SavedPromotionsPage";
+import StoreInfoPage from "../pages/stores/StoreInfoPage";
 import MyPage from "../pages/my/MyPage";
 import MyHistory from "../pages/my/MyHistory";
 import MyCoupon from "../pages/my/MyCoupon";
@@ -26,12 +28,15 @@ export default function AppRouter() {
         element={<PromotionDetailPage />}
       />
 
+      <Route path="/owner" element={<OwnerEntryPage />} />
       <Route path="/owner/promotions" element={<OwnerPromotionPage />} />
 
       <Route
         path="/owner/promotions/:promotionId/performance"
         element={<OwnerPerformancePage />}
       />
+
+      <Route path="/stores/:storeId" element={<StoreInfoPage />} />
 
       <Route path="/my" element={<MyPage />} />
       <Route path="/my/history" element={<MyHistory />} />
