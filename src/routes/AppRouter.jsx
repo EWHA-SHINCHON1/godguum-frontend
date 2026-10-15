@@ -10,6 +10,7 @@ import OwnerEntryPage from "../pages/owner/OwnerEntryPage";
 import OwnerPromotionPage from "../pages/owner/OwnerPromotionPage";
 import OwnerPerformancePage from "../pages/owner/OwnerPerformancePage";
 import SavedPromotionsPage from "../pages/bookmark/SavedPromotionsPage";
+import StoreInfoPage from "../pages/stores/StoreInfoPage";
 import MyPage from "../pages/my/MyPage";
 import MyHistory from "../pages/my/MyHistory";
 import MyCoupon from "../pages/my/MyCoupon";
@@ -34,6 +35,8 @@ export default function AppRouter() {
         path="/owner/promotions/:promotionId/performance"
         element={<OwnerPerformancePage />}
       />
+
+      <Route path="/stores/:storeId" element={<StoreInfoPage />} />
 
       <Route path="/my" element={<MyPage />} />
       <Route path="/my/history" element={<MyHistory />} />
