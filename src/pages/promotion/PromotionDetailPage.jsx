@@ -49,8 +49,7 @@ export default function PromotionDetailPage() {
 
       <PromotionOverview
         promotion={promotion}
-        // TODO: 매장정보 화면 추가 후 연결
-        onStoreClick={() => {}}
+        onStoreClick={() => navigate(`/stores/${promotion.storeId}`)}
         onToggleSave={(saved) => setSaved(promotion.id, saved)}
       />
 

@@ -6,6 +6,7 @@ import dessertImage from "../assets/images/owner/owner-performance-promotion.png
 export const MOCK_PROMOTIONS = [
   {
     id: 1,
+    storeId: 1,
     storeName: "성무",
     title: "성무 취향 발견 주간",
     period: "26.11.06 ~ 26.11.08",
@@ -16,6 +17,7 @@ export const MOCK_PROMOTIONS = [
   },
   {
     id: 2,
+    storeId: 2,
     storeName: "카페 오브제",
     title: "아메리카노 1000원 할인",
     period: "26.11.01 ~ 26.11.05",
@@ -26,6 +28,7 @@ export const MOCK_PROMOTIONS = [
   },
   {
     id: 3,
+    storeId: 3,
     storeName: "브레드 홀릭",
     title: "소금빵 1+1",
     period: "26.10.28 ~ 26.11.03",
@@ -36,6 +39,7 @@ export const MOCK_PROMOTIONS = [
   },
   {
     id: 4,
+    storeId: 4,
     storeName: "커피리브레",
     title: "신메뉴 무료 업그레이드",
     period: "26.11.10 ~ 26.11.16",
@@ -46,6 +50,7 @@ export const MOCK_PROMOTIONS = [
   },
   {
     id: 5,
+    storeId: 5,
     storeName: "달콤 베이커리",
     title: "케이크 10% 할인",
     period: "26.11.02 ~ 26.11.09",
@@ -56,6 +61,7 @@ export const MOCK_PROMOTIONS = [
   },
   {
     id: 6,
+    storeId: 6,
     storeName: "카페 올베르",
     title: "수업 끝나고 달달하게",
     period: "26.11.03 ~ 26.11.07",
@@ -66,6 +72,7 @@ export const MOCK_PROMOTIONS = [
   },
   {
     id: 7,
+    storeId: 7,
     storeName: "오후의 디저트",
     title: "전 메뉴 15% 할인",
     period: "26.10.30 ~ 26.11.03",
