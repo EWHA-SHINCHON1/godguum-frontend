@@ -15,3 +15,7 @@ export function getPromotions(params = {}) {
 
   return api(`/promotions/${query ? `?${query}` : ""}`);
 }
+
+export function getPromotionDetail(promotionId) {
+  return api(`/promotions/${promotionId}/`);
+}
