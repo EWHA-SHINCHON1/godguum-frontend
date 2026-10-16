@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import couponReceivedImage from "../../assets/icons/promotion/coupon-received.svg";
-import { ConfirmModal, CouponIssueBar, Header } from "../../components/common";
+import {
+  Button,
+  ConfirmModal,
+  CouponIssueBar,
+  Header,
+} from "../../components/common";
 import PromotionDetailTabs from "../../components/promotion/PromotionDetailTabs";
 import PromotionInfoTab from "../../components/promotion/PromotionInfoTab";
 import PromotionOverview from "../../components/promotion/PromotionOverview";
@@ -47,6 +52,8 @@ export default function PromotionDetailPage() {
     loading: true,
     error: null,
   });
+  // "다시 시도" 버튼을 누르면 값이 바뀌면서 상세를 다시 조회
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let isCurrent = true;
@@ -63,14 +70,42 @@ export default function PromotionDetailPage() {
     return () => {
       isCurrent = false;
     };
-  }, [promotionId]);
+  }, [promotionId, reloadKey]);
 
   const detail = state.data ? toDetail(state.data) : null;
 
   const [activeTab, setActiveTab] = useState("info");
   const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
 
-  if (!detail) {
+  // 로딩 → 404 → 기타 오류 순서로 검사 (명세서 8. 오류 처리)
+  // 종료·소진 프로모션은 정상 응답(200)이라 여기 걸리지 않고 상세가 그대로 표시됨
+  if (state.loading || state.error || !detail) {
+    const isNotFound = state.error?.status === 404;
+
+    let message = "불러오는 중이에요";
+    let action = null;
+
+    if (isNotFound) {
+      // 없음·비공개·비활성 매장 프로모션
+      message = "프로모션을 찾을 수 없어요";
+      action = (
+        <Button variant="secondary" onClick={() => navigate("/promotions")}>
+          프로모션 둘러보기
+        </Button>
+      );
+    } else if (state.error) {
+      // 서버·네트워크 오류
+      message = "프로모션을 불러오지 못했어요";
+      action = (
+        <Button
+          variant="secondary"
+          onClick={() => setReloadKey((key) => key + 1)}
+        >
+          다시 시도
+        </Button>
+      );
+    }
+
     return (
       <main className="mx-auto min-h-dvh max-w-[402px] bg-brand-surface">
         <Header
@@ -78,9 +113,15 @@ export default function PromotionDetailPage() {
           onBack={() => navigate(-1)}
           className="bg-transparent"
         />
-        <p className="py-20 text-center text-body2 font-medium text-fg-muted">
-          프로모션을 찾을 수 없어요
-        </p>
+        <div className="flex flex-col items-center gap-4 py-20">
+          <p
+            className="text-center text-body2 font-medium text-fg-muted"
+            role={state.error ? "alert" : "status"}
+          >
+            {message}
+          </p>
+          {action}
+        </div>
       </main>
     );
   }

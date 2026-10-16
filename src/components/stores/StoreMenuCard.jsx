@@ -6,13 +6,16 @@ import { formatPrice } from "../../mocks/stores";
 export default function StoreMenuCard({ menu }) {
   return (
     <article className="flex w-full items-center gap-3 rounded-lg border-[0.5px] border-line bg-surface p-3">
-      <img
-        src={menu.image}
-        alt={menu.name}
-        width={80}
-        height={80}
-        className="size-20 shrink-0 rounded-[7px] object-cover"
-      />
+      {/* 메뉴 이미지가 빈 문자열이면 깨진 이미지 영역을 만들지 않음 */}
+      {menu.image && (
+        <img
+          src={menu.image}
+          alt={menu.name}
+          width={80}
+          height={80}
+          className="size-20 shrink-0 rounded-[7px] object-cover"
+        />
+      )}
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <h3 className="text-body1 leading-[1.5] font-semibold text-fg">
           {menu.name}
