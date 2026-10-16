@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { GNB, SearchBar, Tag, TopBar } from "../../components/common";
 import PromotionListCard from "../../components/promotion/PromotionListCard";
 import { getPromotions } from "../../api/promotions";
-import { getDday, formatSeoulDate } from "../../utils/date";
+import { toListCard } from "../../utils/promotionCard";
 import { useSavedPromotions } from "../../store/savedPromotions";
 
 const PROMOTION_FILTERS = ["전체", "진행중", "곧 시작", "오늘 마감"];
@@ -17,23 +17,13 @@ const FILTER_PARAMS = {
   "오늘 마감": { closing_today: true, period: "ongoing" },
 };
 
-//api 응답 전달 (format 맞춰서)
-function toListCard(promotion, isSaved) {
-  return {
-    id: promotion.id,
-    title: promotion.title,
-    storeName: promotion.store.name,
-    image: promotion.image_url,
-    period: `${formatSeoulDate(promotion.starts_at)} ~ ${formatSeoulDate(promotion.ends_at)}`,
-    dDay: getDday(promotion.ends_at),
-    saved: isSaved(promotion.id),
-  };
-}
+// api 응답 → 카드 모양 변환(toListCard)은 저장 목록 화면과 같이 쓰려고 utils/promotionCard.js 로 옮김
 
 export default function PromotionListPage() {
   const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState("전체");
-  const { isSaved, setSaved } = useSavedPromotions();
+  // isSaved: 아이콘 상태 / toggleSave: 북마크 버튼 동작 (store/SavedPromotionsProvider.jsx)
+  const { isSaved, toggleSave } = useSavedPromotions();
 
   const [state, setState] = useState({
     results: [],
@@ -111,7 +101,7 @@ export default function PromotionListPage() {
                   <PromotionListCard
                     promotion={promotion}
                     onClick={() => navigate(`/promotions/${promotion.id}`)}
-                    onToggleSave={(saved) => setSaved(promotion.id, saved)}
+                    onToggleSave={(saved) => toggleSave(promotion.id, saved)}
                   />
                 </li>
               ))}
