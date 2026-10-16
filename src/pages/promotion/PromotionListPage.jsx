@@ -17,7 +17,7 @@ const FILTER_PARAMS = {
   "오늘 마감": { closing_today: true, period: "ongoing" },
 };
 
-// api 응답 전달
+//api 응답 전달 (format 맞춰서)
 function toListCard(promotion, isSaved) {
   return {
     id: promotion.id,

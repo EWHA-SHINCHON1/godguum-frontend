@@ -5,11 +5,15 @@ import { Bookmark } from "../common";
 /**
  * 프로모션 상세 상단 (Figma: 프로모션) — 대표 이미지 · 가게/제목/기간 · 이용 조건
  */
-export default function PromotionOverview({ promotion, onStoreClick, onToggleSave }) {
+export default function PromotionOverview({
+  promotion,
+  onStoreClick,
+  onToggleSave,
+}) {
   return (
     <section aria-label="프로모션 개요">
       <img
-        src={promotion.image}
+        src={promotion.image_url}
         alt={`${promotion.title} 대표 이미지`}
         className="aspect-square w-full object-cover"
       />
@@ -53,8 +57,12 @@ export default function PromotionOverview({ promotion, onStoreClick, onToggleSav
             이용 조건
           </span>
           <p className="min-w-0 flex-1 text-body3 tracking-[-0.012px]">
-            <span className="block font-semibold text-fg">{promotion.condition.title}</span>
-            <span className="block font-medium text-fg-muted">{promotion.condition.note}</span>
+            <span className="block font-semibold text-fg">
+              {promotion.benefit}
+            </span>
+            <span className="block font-medium text-fg-muted">
+              {promotion.terms}
+            </span>
           </p>
         </div>
       </div>

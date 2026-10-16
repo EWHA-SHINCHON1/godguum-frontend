@@ -49,6 +49,3 @@ export function formatSeoulDate(value) {
 
   return `${year.slice(-2)}.${month}.${day}`;
 }
-
-console.log(formatSeoulDate("2026-10-11T09:00:00+09:00")); // 26.10.11 이 나와야 함
-console.log(getDday("2026-10-20T23:59:00+09:00")); // D-4 가 나와야 함 (오늘 10/16 기준)
