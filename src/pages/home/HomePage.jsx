@@ -32,7 +32,8 @@ function toCardPromotion(promotion, isSaved) {
     benefit: promotion.benefit || "",
     image: promotion.image_url || undefined,
     dDay: getDday(promotion.ends_at),
-    saved: isSaved(promotion.id),
+    // 서버 is_saved 를 기본으로, 이번 방문 중 바꾼 값이 있으면 그 값
+    saved: isSaved(promotion.id, promotion.is_saved),
   };
 }
 
@@ -63,7 +64,9 @@ export default function HomePage() {
     loading: true,
     error: false,
   });
-  const { isSaved, setSaved } = useSavedPromotions();
+  // isSaved: 아이콘 상태 / toggleSave: 북마크 버튼 동작 (store/SavedPromotionsProvider.jsx)
+  // PromotionSection 이 onToggleSave(promotion.id, saved) 로 부르므로 toggleSave 를 그대로 넘김
+  const { isSaved, toggleSave } = useSavedPromotions();
 
   useEffect(() => {
     let isCurrent = true;
@@ -165,7 +168,7 @@ export default function HomePage() {
           showMore
           onMoreClick={() => navigate("/promotions")}
           onPromotionClick={goToDetail}
-          onToggleSave={setSaved}
+          onToggleSave={toggleSave}
         />
         <PromotionStateMessage
           loading={todayState.loading}
@@ -178,7 +181,7 @@ export default function HomePage() {
           iconClassName="h-[19.763px] w-[18px]"
           promotions={trendingPromotions}
           onPromotionClick={goToDetail}
-          onToggleSave={setSaved}
+          onToggleSave={toggleSave}
         />
         <PromotionStateMessage
           loading={trendingState.loading}

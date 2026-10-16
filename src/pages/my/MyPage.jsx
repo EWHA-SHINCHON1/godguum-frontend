@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import profileAvatar from "../../assets/icons/my/profile-avatar.svg";
 import bannerCharacter from "../../assets/icons/my/banner-character.svg";
@@ -10,7 +10,7 @@ import chevronIcon from "../../assets/icons/my/menu-chevron.svg";
 import characterSad from "../../assets/icons/character-sad.svg";
 import { ConfirmModal, GNB, TopBar } from "../../components/common";
 import { MOCK_COUPONS, MOCK_USER } from "../../mocks/coupons";
-import { useSavedPromotions } from "../../store/savedPromotions";
+import { getSavedPromotions } from "../../api/promotions";
 
 const MENUS = [
   {
@@ -39,8 +39,27 @@ const MENUS = [
 /** 4-1-1 마이 */
 export default function MyPage() {
   const navigate = useNavigate();
-  const { savedIds } = useSavedPromotions();
   const [logoutOpen, setLogoutOpen] = useState(false);
+
+  // 저장한 프로모션 수: 서버 저장 목록 응답의 count (전체 개수)
+  // 비로그인(401)·오류면 0 으로 표시
+  const [savedCount, setSavedCount] = useState(0);
+
+  useEffect(() => {
+    let isCurrent = true;
+
+    getSavedPromotions()
+      .then((data) => {
+        if (isCurrent) setSavedCount(data.count ?? 0);
+      })
+      .catch(() => {
+        if (isCurrent) setSavedCount(0);
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
 
   const stats = [
     { label: "전체 쿠폰", value: MOCK_COUPONS.length },
@@ -48,7 +67,7 @@ export default function MyPage() {
       label: "사용한 쿠폰",
       value: MOCK_COUPONS.filter((coupon) => coupon.status === "used").length,
     },
-    { label: "저장한 프로모션", value: savedIds.length },
+    { label: "저장한 프로모션", value: savedCount },
   ];
 
   const handleLogout = () => {
