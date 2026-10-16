@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import couponReceivedImage from "../../assets/icons/promotion/coupon-received.svg";
 import {
@@ -11,7 +11,11 @@ import PromotionDetailTabs from "../../components/promotion/PromotionDetailTabs"
 import PromotionInfoTab from "../../components/promotion/PromotionInfoTab";
 import PromotionOverview from "../../components/promotion/PromotionOverview";
 import StoreStoryTab from "../../components/promotion/StoreStoryTab";
-import { getPromotionDetail } from "../../api/promotions";
+import {
+  createPromotionEvent,
+  getPromotionDetail,
+  sendPromotionEvent,
+} from "../../api/promotions";
 import { useSavedPromotions } from "../../store/savedPromotions";
 import { formatSeoulDate, getDday } from "../../utils/date";
 
@@ -71,6 +75,23 @@ export default function PromotionDetailPage() {
       isCurrent = false;
     };
   }, [promotionId, reloadKey]);
+
+  // 조회 이벤트: 상세 데이터를 받아 화면에 실제로 그린 뒤 프로모션당 1번만 전송
+  // - 로딩 중·조회 실패 상태에서는 보내지 않음 (state.data 가 있을 때만)
+  // - ref 에 이미 보낸 프로모션 ID 를 기록해서, 개발 모드 effect 2번 실행·리렌더링·
+  //   북마크/쿠폰 후 상세 재조회로는 다시 보내지 않음
+  // - 다른 프로모션으로 이동하면 ID 가 달라지므로 새 조회로 기록
+  const viewSentForRef = useRef(null);
+
+  useEffect(() => {
+    if (!state.data) return;
+
+    const id = String(state.data.id);
+    if (viewSentForRef.current === id) return;
+
+    viewSentForRef.current = id;
+    sendPromotionEvent(id, createPromotionEvent("view"));
+  }, [state.data]);
 
   const detail = state.data ? toDetail(state.data) : null;
 
