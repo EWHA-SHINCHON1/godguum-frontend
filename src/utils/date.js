@@ -18,6 +18,11 @@ function getSeoulDayValue(date) {
   return Date.UTC(values.year, values.month - 1, values.day);
 }
 
+// 브라우저 지역 설정과 무관하게 서울 기준 날짜를 일 단위 번호로 반환한다.
+export function getSeoulDayNumber(date = new Date()) {
+  return Math.floor(getSeoulDayValue(date) / (1000 * 60 * 60 * 24));
+}
+
 function getLegacyDday(endsAt) {
   const endDate = new Date(endsAt);
 

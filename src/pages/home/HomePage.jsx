@@ -7,7 +7,7 @@ import { getPromotions } from "../../api/promotions";
 import { useSavedPromotions } from "../../store/savedPromotions";
 import todayPromotionIcon from "../../assets/icons/promotion-today.svg";
 import trendingFireIcon from "../../assets/icons/trending-fire.svg";
-import { getDday } from "../../utils/date";
+import { getDday, getSeoulDayNumber } from "../../utils/date";
 
 const TODAY_FILTERS = ["전체", "진행중", "곧 시작", "오늘 마감"];
 const TODAY_FILTER_PARAMS = {
@@ -16,13 +16,6 @@ const TODAY_FILTER_PARAMS = {
   "곧 시작": { status: "upcoming" },
   "오늘 마감": { status: "active", closing_today: true },
 };
-
-const seoulDateFormatter = new Intl.DateTimeFormat("en-CA", {
-  timeZone: "Asia/Seoul",
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-});
 
 function toCardPromotion(promotion, isSaved) {
   return {
@@ -60,6 +53,11 @@ export default function HomePage() {
     error: false,
   });
   const [trendingState, setTrendingState] = useState({
+    results: [],
+    loading: true,
+    error: false,
+  });
+  const [bannerState, setBannerState] = useState({
     results: [],
     loading: true,
     error: false,
@@ -116,6 +114,34 @@ export default function HomePage() {
     };
   }, []);
 
+  useEffect(() => {
+    let isCurrent = true;
+
+    getPromotions({
+      featured: true,
+      period: "ongoing",
+      ordering: "featured",
+    })
+      .then((response) => {
+        if (isCurrent) {
+          setBannerState({
+            results: Array.isArray(response?.results) ? response.results : [],
+            loading: false,
+            error: false,
+          });
+        }
+      })
+      .catch(() => {
+        if (isCurrent) {
+          setBannerState({ results: [], loading: false, error: true });
+        }
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
+
   const todayPromotions = useMemo(
     () =>
       todayState.results.map((promotion) =>
@@ -132,7 +158,24 @@ export default function HomePage() {
     [trendingState.results, isSaved],
   );
 
-  const bannerPromotion = trendingPromotions[0];
+  const bannerPromotion = useMemo(() => {
+    if (bannerState.results.length === 0) {
+      return null;
+    }
+
+    const promotion =
+      bannerState.results[
+        getSeoulDayNumber() % bannerState.results.length
+      ];
+
+    return {
+      id: promotion.id,
+      storeName: promotion.store?.name || "",
+      title: promotion.title || "",
+      image: promotion.image_url || "",
+      requiresCoupon: promotion.requires_coupon,
+    };
+  }, [bannerState.results]);
   const goToDetail = (id) => navigate(`/promotions/${id}`);
   const handleFilterChange = (filter) => {
     setActiveFilter(filter);
