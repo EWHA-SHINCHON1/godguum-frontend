@@ -19,10 +19,7 @@ export default function UsedCouponCard({ coupon, onClick }) {
   const usedDate = formatSeoulDateDot(coupon.used_at);
 
   return (
-    <article
-      onClick={onClick}
-      className="flex h-[115px] w-full cursor-pointer items-center gap-3 rounded-lg border-[0.5px] border-line bg-surface p-3"
-    >
+    <article className="flex h-[115px] w-full cursor-pointer items-center gap-3 rounded-lg border-[0.5px] border-line bg-surface p-3">
       <img
         src={imageUrl}
         alt={title}
