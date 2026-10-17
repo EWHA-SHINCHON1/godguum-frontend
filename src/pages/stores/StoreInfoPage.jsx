@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Button, Header } from "../../components/common";
 import StoreInfoCard from "../../components/stores/StoreInfoCard";
 import StoreMenuCard from "../../components/stores/StoreMenuCard";
 import { getStoreDetail } from "../../api/store";
+import { createPromotionEvent, sendPromotionEvent } from "../../api/promotions";
 
 // 응답 category 값 → 화면 표시용 라벨
 const CATEGORY_LABEL = {
@@ -15,8 +16,13 @@ const CATEGORY_LABEL = {
 // 빈 문자열로 오는 링크는 목록에서 빼서 클릭 가능한 빈 버튼이 생기지 않게 함
 function toStoreView(store) {
   const links = [
-    { label: "인스타그램 바로가기", url: store.instagram_url },
-    { label: "네이버 바로가기", url: store.naver_url },
+    // channel: 이벤트 API 에 보내는 값 (소문자 "instagram" / "naver" 만 허용)
+    {
+      label: "인스타그램 바로가기",
+      url: store.instagram_url,
+      channel: "instagram",
+    },
+    { label: "네이버 바로가기", url: store.naver_url, channel: "naver" },
   ].filter((link) => link.url);
 
   return {
@@ -43,6 +49,28 @@ function toStoreView(store) {
 export default function StoreInfoPage() {
   const navigate = useNavigate();
   const { storeId } = useParams();
+  // 프로모션 상세에서 들어왔을 때만 ?promotion={id} 가 붙어 있음
+  // 숫자가 아니면(직접 접속·잘못된 주소) 이벤트를 보내지 않도록 null 처리
+  const [searchParams] = useSearchParams();
+  const promotionParam = searchParams.get("promotion");
+  const promotionId = /^\d+$/.test(promotionParam ?? "")
+    ? promotionParam
+    : null;
+
+  // 외부 채널 클릭 이벤트 (명세서 ④ 6-3)
+  // - 클릭 1번 = 새 이벤트 1개 (createPromotionEvent 가 새 UUID 발급)
+  // - 프로모션 ID 를 모르면 어느 프로모션 성과인지 알 수 없으므로 보내지 않음
+  // - await 하지 않음: 전송 성공 여부와 상관없이 링크는 바로 열림
+  //   (sendPromotionEvent 는 keepalive + 실패 시 에러를 던지지 않음)
+  function handleLinkClick(link) {
+    if (!promotionId || !link.channel) return;
+
+    sendPromotionEvent(
+      promotionId,
+      createPromotionEvent("channel_click", link.channel),
+    );
+  }
+
   const [state, setState] = useState({
     data: null,
     loading: true,
@@ -142,7 +170,7 @@ export default function StoreInfoPage() {
             )}
           </div>
 
-          <StoreInfoCard store={store} />
+          <StoreInfoCard store={store} onLinkClick={handleLinkClick} />
 
           {/* 지도 이미지는 API 에 없어서 링크 버튼으로 대체. 지도 클릭은 이벤트 집계 대상 아님 */}
           {store.mapUrl && (
