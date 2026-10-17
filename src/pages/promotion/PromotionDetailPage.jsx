@@ -42,7 +42,7 @@ function toDetail(promotion) {
     storeName: promotion.store.name,
     title: promotion.title,
     period: `${formatSeoulDate(promotion.starts_at)} ~ ${formatSeoulDate(promotion.ends_at)}`,
-    dDay: getDday(promotion.ends_at),
+    dDay: getDday(promotion.starts_at, promotion.ends_at),
     status: STATUS_LABEL[promotion.status],
     hasCoupon: promotion.requires_coupon,
   };

@@ -18,7 +18,7 @@ function getSeoulDayValue(date) {
   return Date.UTC(values.year, values.month - 1, values.day);
 }
 
-export function getDday(endsAt) {
+function getLegacyDday(endsAt) {
   const endDate = new Date(endsAt);
 
   if (!endsAt || Number.isNaN(endDate.getTime())) {
@@ -31,6 +31,47 @@ export function getDday(endsAt) {
   );
 
   return remainingDays <= 0 ? "D-DAY" : `D-${remainingDays}`;
+}
+
+export function getDday(startsAt, endsAt) {
+  // 기존 상세/목록 화면의 단일 종료일 호출은 기존 표시를 유지한다.
+  if (endsAt === undefined) {
+    return getLegacyDday(startsAt);
+  }
+
+  const startDate = new Date(startsAt);
+  const endDate = new Date(endsAt);
+
+  if (
+    !startsAt ||
+    !endsAt ||
+    Number.isNaN(startDate.getTime()) ||
+    Number.isNaN(endDate.getTime())
+  ) {
+    return "";
+  }
+
+  const now = new Date();
+
+  if (now >= endDate) {
+    return "종료";
+  }
+
+  if (now < startDate) {
+    const remainingDays = Math.round(
+      (getSeoulDayValue(startDate) - getSeoulDayValue(now)) /
+        (1000 * 60 * 60 * 24),
+    );
+
+    return remainingDays === 0 ? "오늘 시작" : `시작 D-${remainingDays}`;
+  }
+
+  const remainingDays = Math.round(
+    (getSeoulDayValue(endDate) - getSeoulDayValue(now)) /
+      (1000 * 60 * 60 * 24),
+  );
+
+  return remainingDays === 0 ? "오늘 마감" : `마감 D-${remainingDays}`;
 }
 
 // "2026-10-11T09:00:00+09:00" → "26.10.11"

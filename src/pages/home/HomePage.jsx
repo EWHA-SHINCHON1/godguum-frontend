@@ -31,7 +31,7 @@ function toCardPromotion(promotion, isSaved) {
     title: promotion.title || promotion.benefit || "",
     benefit: promotion.benefit || "",
     image: promotion.image_url || undefined,
-    dDay: getDday(promotion.ends_at),
+    dDay: getDday(promotion.starts_at, promotion.ends_at),
     // 서버 is_saved 를 기본으로, 이번 방문 중 바꾼 값이 있으면 그 값
     saved: isSaved(promotion.id, promotion.is_saved),
   };
