@@ -49,3 +49,20 @@ export function formatSeoulDate(value) {
 
   return `${year.slice(-2)}.${month}.${day}`;
 }
+
+// "2026-10-12T14:30:00+09:00" → "2026. 10. 12"  (이용내역 "사용 완료" 날짜용)
+// 서버 시간은 UTC 로 올 수도 있어서 서울 기준 날짜로 바꿔서 표시
+export function formatSeoulDateDot(value) {
+  const date = new Date(value);
+
+  if (!value || Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  const parts = seoulDateFormatter.formatToParts(date);
+  const year = parts.find((part) => part.type === "year").value;
+  const month = parts.find((part) => part.type === "month").value;
+  const day = parts.find((part) => part.type === "day").value;
+
+  return `${year}. ${month}. ${day}`;
+}

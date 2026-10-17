@@ -21,6 +21,7 @@ import { SavedPromotionsContext } from "./savedPromotions";
  *   const { isSaved, toggleSave } = useSavedPromotions();
  *   isSaved(promotion.id, promotion.is_saved)  → 아이콘 채울지 여부
  *   toggleSave(promotion.id, nextSaved)        → 북마크 버튼 눌렀을 때
+ *   resetSaved()                               → 로그아웃할 때 (이전 사용자 기록 지우기)
  */
 
 // 예전 버전이 localStorage 에 저장하던 키. 이제 안 쓰므로 남아 있으면 지움
@@ -130,8 +131,21 @@ export default function SavedPromotionsProvider({ children }) {
     [setOverride],
   );
 
+  /**
+   * 로그아웃할 때 호출 (명세서 ⑥-10 "로그아웃 → 개인 데이터 초기화")
+   * overrides 에는 "이전 사용자가 이번 방문 중 누른 북마크"가 남아 있음
+   * → 안 비우면 다른 계정으로 로그인했을 때 남의 북마크 아이콘이 채워져 보일 수 있음
+   */
+  const resetSaved = useCallback(() => {
+    setOverrides({});
+    pendingIdsRef.current.clear();
+  }, []);
+
   // useMemo: overrides 가 바뀔 때만 새 객체를 만들어 넘김 (불필요한 리렌더링 방지)
-  const value = useMemo(() => ({ isSaved, toggleSave }), [isSaved, toggleSave]);
+  const value = useMemo(
+    () => ({ isSaved, toggleSave, resetSaved }),
+    [isSaved, toggleSave, resetSaved],
+  );
 
   return (
     <SavedPromotionsContext.Provider value={value}>

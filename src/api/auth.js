@@ -42,3 +42,17 @@ export async function ensureLoggedIn(nextPath) {
 
   return true;
 }
+
+/**
+ * 로그아웃 — POST /auth/logout/  (명세서 ②)
+ * - 서버가 세션(출입증)을 지워줌. 카카오 연결 해제(탈퇴)와는 다름
+ * - 성공하면 204 (본문 없음) → api() 가 null 을 돌려줌
+ * - 이미 로그아웃된 상태여도 204
+ * - 로그인 상태에서는 CSRF 헤더 필요 → api() 가 POST 에 자동으로 붙여줌
+ *   (토큰은 client.js 가 /auth/me/ 응답에서 기억해 둔 값)
+ *
+ * 실패하면(403 CSRF_FAILED, 네트워크 오류 등) 에러를 그대로 던짐 → 호출하는 쪽에서 처리
+ */
+export function logout() {
+  return api("/auth/logout/", { method: "POST" });
+}
