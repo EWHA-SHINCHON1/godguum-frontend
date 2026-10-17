@@ -468,7 +468,11 @@ export default function PromotionDetailPage() {
 
       <PromotionOverview
         promotion={promotion}
-        onStoreClick={() => navigate(`/stores/${promotion.storeId}`)}
+        // 매장정보에서 인스타·네이버 클릭을 이 프로모션 성과로 집계하려고 프로모션 ID 를 같이 넘김
+        // (navigate state 대신 주소에 넣어서 매장정보 화면을 새로고침해도 유지됨)
+        onStoreClick={() =>
+          navigate(`/stores/${promotion.storeId}?promotion=${promotion.id}`)
+        }
         onToggleSave={handleToggleSave}
       />
 
