@@ -14,14 +14,6 @@ const loginErrorMessages = {
   INACTIVE_USER: "이용이 제한된 계정입니다.",
 };
 
-function KakaoMark() {
-  return (
-    <span aria-hidden="true" className="relative size-5 shrink-0 rounded-full bg-black">
-      <span className="absolute -bottom-0.5 left-0.5 size-2 rotate-45 bg-black" />
-    </span>
-  );
-}
-
 function LoginPage() {
   const [searchParams] = useSearchParams();
   const errorCode = searchParams.get("error");
@@ -34,45 +26,49 @@ function LoginPage() {
   };
 
   return (
-    <main className="relative mx-auto min-h-dvh w-full max-w-[402px] overflow-hidden bg-[#fffdf7]">
-      <section className="flex flex-col items-center pt-[204px] text-center">
+    <main className="mx-auto flex min-h-dvh w-full max-w-[402px] flex-col overflow-x-hidden bg-[#fffdf7]">
+      <section className="flex shrink-0 flex-col items-center pt-[clamp(96px,23.3dvh,204px)] text-center">
         <img src={logo} alt="갓구움" width={128} height={68} className="h-auto w-32" />
         <p className="mt-5 w-[150px] text-center text-[16px] font-medium leading-[140%] tracking-[-0.016px] text-[#885300]">
           학교 앞 맛집과 혜택을 한 곳에서 만나보세요!
         </p>
       </section>
 
-      <img
-        src={loginCharacter}
-        alt="갓구움 캐릭터"
-        width={402}
-        height={452}
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-auto w-full"
-      />
-
-      <Button
-        onClick={handleKakaoLogin}
-        className="absolute left-[30px] top-[633px] h-[56px] w-[342px] gap-3 rounded-[99px] bg-[#FFDA5C] px-3 text-[16px] font-medium leading-[140%] tracking-[-0.016px] text-[#201F1A]"
-      >
+      <div className="mt-[clamp(20px,calc(31.9dvh-193px),86px)] flex-none">
         <img
-          src={kakaoIcon}
-          alt=""
-          aria-hidden="true"
-          className="h-5 w-5 shrink-0"
+          src={loginCharacter}
+          alt="갓구움 캐릭터"
+          width={402}
+          height={452}
+          className="pointer-events-none h-auto w-full object-contain"
         />
-        카카오로 시작하기
-      </Button>
-      <p className="absolute left-0 top-[705px] w-full text-center text-body2 font-medium text-fg-muted">
-        간단하게 시작해보세요!
-      </p>
-      {errorMessage && (
-        <p
-          role="alert"
-          className="absolute left-0 top-[737px] w-full px-8 text-center text-body2 font-medium text-red-500"
+      </div>
+
+      <section className="relative z-10 -mt-[241px] flex flex-none flex-col items-center px-[30px] pb-8">
+        <Button
+          onClick={handleKakaoLogin}
+          className="h-[56px] w-full gap-3 rounded-[99px] bg-[#FFDA5C] px-3 text-[16px] font-medium leading-[140%] tracking-[-0.016px] text-[#201F1A]"
         >
-          {errorMessage}
+          <img
+            src={kakaoIcon}
+            alt=""
+            aria-hidden="true"
+            className="h-5 w-5 shrink-0"
+          />
+          카카오로 시작하기
+        </Button>
+        <p className="mt-4 text-center text-body2 font-medium text-fg-muted">
+          간단하게 시작해보세요!
         </p>
-      )}
+        {errorMessage && (
+          <p
+            role="alert"
+            className="mt-2 text-center text-body2 font-medium text-red-500"
+          >
+            {errorMessage}
+          </p>
+        )}
+      </section>
     </main>
   );
 }
