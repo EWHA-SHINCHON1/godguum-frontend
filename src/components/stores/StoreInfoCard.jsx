@@ -27,8 +27,9 @@ function InfoRow({ icon, label, children }) {
 /**
  * 매장 정보 카드 (Figma: 매장 정보)
  * 영업시간 · 위치 · 외부 링크
+ * onLinkClick(link): 외부 링크를 눌렀을 때 호출 (채널 클릭 이벤트 전송용, 선택)
  */
-export default function StoreInfoCard({ store }) {
+export default function StoreInfoCard({ store, onLinkClick }) {
   return (
     <section
       aria-label="매장 정보"
@@ -50,6 +51,8 @@ export default function StoreInfoCard({ store }) {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  // preventDefault 를 하지 않으므로 이벤트 전송과 상관없이 링크는 그대로 열림
+                  onClick={() => onLinkClick?.(link)}
                   className="w-fit text-fg-info underline decoration-from-font underline-offset-2"
                 >
                   {link.label}

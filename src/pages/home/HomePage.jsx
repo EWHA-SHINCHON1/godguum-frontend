@@ -7,6 +7,7 @@ import { getPromotions } from "../../api/promotions";
 import { useSavedPromotions } from "../../store/savedPromotions";
 import todayPromotionIcon from "../../assets/icons/promotion-today.svg";
 import trendingFireIcon from "../../assets/icons/trending-fire.svg";
+import { getDday, getSeoulDayNumber } from "../../utils/date";
 
 const TODAY_FILTERS = ["전체", "진행중", "곧 시작", "오늘 마감"];
 const TODAY_FILTER_PARAMS = {
@@ -16,39 +17,6 @@ const TODAY_FILTER_PARAMS = {
   "오늘 마감": { status: "active", closing_today: true },
 };
 
-const seoulDateFormatter = new Intl.DateTimeFormat("en-CA", {
-  timeZone: "Asia/Seoul",
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-});
-
-function getSeoulDayValue(date) {
-  const parts = seoulDateFormatter.formatToParts(date);
-  const values = Object.fromEntries(
-    parts
-      .filter((part) => part.type !== "literal")
-      .map((part) => [part.type, Number(part.value)]),
-  );
-
-  return Date.UTC(values.year, values.month - 1, values.day);
-}
-
-function getDday(endsAt) {
-  const endDate = new Date(endsAt);
-
-  if (!endsAt || Number.isNaN(endDate.getTime())) {
-    return "";
-  }
-
-  const remainingDays = Math.round(
-    (getSeoulDayValue(endDate) - getSeoulDayValue(new Date())) /
-      (1000 * 60 * 60 * 24),
-  );
-
-  return remainingDays <= 0 ? "D-DAY" : `D-${remainingDays}`;
-}
-
 function toCardPromotion(promotion, isSaved) {
   return {
     id: promotion.id,
@@ -56,8 +24,9 @@ function toCardPromotion(promotion, isSaved) {
     title: promotion.title || promotion.benefit || "",
     benefit: promotion.benefit || "",
     image: promotion.image_url || undefined,
-    dDay: getDday(promotion.ends_at),
-    saved: isSaved(promotion.id),
+    dDay: getDday(promotion.starts_at, promotion.ends_at),
+    // 서버 is_saved 를 기본으로, 이번 방문 중 바꾼 값이 있으면 그 값
+    saved: isSaved(promotion.id, promotion.is_saved),
   };
 }
 
@@ -72,9 +41,7 @@ function PromotionStateMessage({ loading, error, isEmpty }) {
       ? "프로모션을 불러오지 못했습니다."
       : "표시할 프로모션이 없어요.";
 
-  return (
-    <p className="py-2 text-body3 font-medium text-fg-muted">{message}</p>
-  );
+  return <p className="py-2 text-body3 font-medium text-fg-muted">{message}</p>;
 }
 
 export default function HomePage() {
@@ -90,7 +57,14 @@ export default function HomePage() {
     loading: true,
     error: false,
   });
-  const { isSaved, setSaved } = useSavedPromotions();
+  const [bannerState, setBannerState] = useState({
+    results: [],
+    loading: true,
+    error: false,
+  });
+  // isSaved: 아이콘 상태 / toggleSave: 북마크 버튼 동작 (store/SavedPromotionsProvider.jsx)
+  // PromotionSection 이 onToggleSave(promotion.id, saved) 로 부르므로 toggleSave 를 그대로 넘김
+  const { isSaved, toggleSave } = useSavedPromotions();
 
   useEffect(() => {
     let isCurrent = true;
@@ -140,17 +114,68 @@ export default function HomePage() {
     };
   }, []);
 
+  useEffect(() => {
+    let isCurrent = true;
+
+    getPromotions({
+      featured: true,
+      period: "ongoing",
+      ordering: "featured",
+    })
+      .then((response) => {
+        if (isCurrent) {
+          setBannerState({
+            results: Array.isArray(response?.results) ? response.results : [],
+            loading: false,
+            error: false,
+          });
+        }
+      })
+      .catch(() => {
+        if (isCurrent) {
+          setBannerState({ results: [], loading: false, error: true });
+        }
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
+
   const todayPromotions = useMemo(
-    () => todayState.results.map((promotion) => toCardPromotion(promotion, isSaved)),
+    () =>
+      todayState.results.map((promotion) =>
+        toCardPromotion(promotion, isSaved),
+      ),
     [todayState.results, isSaved],
   );
 
   const trendingPromotions = useMemo(
-    () => trendingState.results.map((promotion) => toCardPromotion(promotion, isSaved)),
+    () =>
+      trendingState.results.map((promotion) =>
+        toCardPromotion(promotion, isSaved),
+      ),
     [trendingState.results, isSaved],
   );
 
-  const bannerPromotion = trendingPromotions[0];
+  const bannerPromotion = useMemo(() => {
+    if (bannerState.results.length === 0) {
+      return null;
+    }
+
+    const promotion =
+      bannerState.results[
+        getSeoulDayNumber() % bannerState.results.length
+      ];
+
+    return {
+      id: promotion.id,
+      storeName: promotion.store?.name || "",
+      title: promotion.title || "",
+      image: promotion.image_url || "",
+      requiresCoupon: promotion.requires_coupon,
+    };
+  }, [bannerState.results]);
   const goToDetail = (id) => navigate(`/promotions/${id}`);
   const handleFilterChange = (filter) => {
     setActiveFilter(filter);
@@ -186,7 +211,7 @@ export default function HomePage() {
           showMore
           onMoreClick={() => navigate("/promotions")}
           onPromotionClick={goToDetail}
-          onToggleSave={setSaved}
+          onToggleSave={toggleSave}
         />
         <PromotionStateMessage
           loading={todayState.loading}
@@ -199,7 +224,7 @@ export default function HomePage() {
           iconClassName="h-[19.763px] w-[18px]"
           promotions={trendingPromotions}
           onPromotionClick={goToDetail}
-          onToggleSave={setSaved}
+          onToggleSave={toggleSave}
         />
         <PromotionStateMessage
           loading={trendingState.loading}
