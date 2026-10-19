@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Header, SegmentedTabs } from "../../components/common";
 import CouponCard from "../../components/coupon/CouponCard";
 import { getMyCoupons } from "../../api/coupon";
-import { formatSeoulDate, getDday } from "../../utils/date";
+import { formatSeoulDate, getCouponExpirationDday } from "../../utils/date";
 
 const TABS = [
   {
@@ -37,7 +37,10 @@ function toCouponCard(coupon) {
           ? `${formatSeoulDate(coupon.used_at)} 사용`
           : `~ ${expires} 까지 사용`,
       // 사용 가능한 쿠폰만 D-day 표시 (기간 만료 카드는 CouponCard 가 "기간 만료"로 덮어씀)
-      dDay: coupon.status === "available" ? getDday(coupon.expires_at) : "",
+      dDay:
+        coupon.status === "available"
+          ? getCouponExpirationDday(coupon.expires_at)
+          : "",
     },
   };
 }
