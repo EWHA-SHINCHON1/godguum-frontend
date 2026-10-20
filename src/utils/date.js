@@ -23,7 +23,7 @@ export function getSeoulDayNumber(date = new Date()) {
   return Math.floor(getSeoulDayValue(date) / (1000 * 60 * 60 * 24));
 }
 
-function getLegacyDday(endsAt) {
+export function getCouponExpirationDday(endsAt) {
   const endDate = new Date(endsAt);
 
   if (!endsAt || Number.isNaN(endDate.getTime())) {
@@ -38,43 +38,37 @@ function getLegacyDday(endsAt) {
   return remainingDays <= 0 ? "D-DAY" : `D-${remainingDays}`;
 }
 
-export function getDday(startsAt, endsAt) {
-  // 기존 상세/목록 화면의 단일 종료일 호출은 기존 표시를 유지한다.
-  if (endsAt === undefined) {
-    return getLegacyDday(startsAt);
-  }
-
+/**
+ * 소비자 프로모션의 상태 라벨을 실제 시작·종료 시각과 서울 날짜 기준으로 계산한다.
+ *
+ * ends_at은 백엔드에서 종료일 23:59:59+09:00으로 내려온다고 가정한다.
+ */
+export function getPromotionStatusLabel(startsAt, endsAt, now = new Date()) {
   const startDate = new Date(startsAt);
   const endDate = new Date(endsAt);
 
   if (
     !startsAt ||
     !endsAt ||
+    Number.isNaN(now.getTime()) ||
     Number.isNaN(startDate.getTime()) ||
     Number.isNaN(endDate.getTime())
   ) {
     return "";
   }
 
-  const now = new Date();
-
+  // 상태 자체는 서울 날짜가 아닌 실제 timestamp로 판단한다.
   if (now >= endDate) {
     return "종료";
   }
 
   if (now < startDate) {
-    const remainingDays = Math.round(
-      (getSeoulDayValue(startDate) - getSeoulDayValue(now)) /
-        (1000 * 60 * 60 * 24),
-    );
+    const remainingDays = getSeoulDayNumber(startDate) - getSeoulDayNumber(now);
 
     return remainingDays === 0 ? "오늘 시작" : `시작 D-${remainingDays}`;
   }
 
-  const remainingDays = Math.round(
-    (getSeoulDayValue(endDate) - getSeoulDayValue(now)) /
-      (1000 * 60 * 60 * 24),
-  );
+  const remainingDays = getSeoulDayNumber(endDate) - getSeoulDayNumber(now);
 
   return remainingDays === 0 ? "오늘 마감" : `마감 D-${remainingDays}`;
 }

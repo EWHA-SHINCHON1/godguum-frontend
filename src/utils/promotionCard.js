@@ -1,4 +1,4 @@
-import { formatSeoulDate, getDday } from "./date";
+import { formatSeoulDate, getPromotionStatusLabel } from "./date";
 
 /**
  * 프로모션 API 응답 1개 → PromotionListCard 가 쓰는 모양으로 변환
@@ -14,7 +14,7 @@ export function toListCard(promotion, isSaved) {
     storeName: promotion.store?.name ?? "",
     image: promotion.image_url,
     period: `${formatSeoulDate(promotion.starts_at)} ~ ${formatSeoulDate(promotion.ends_at)}`,
-    dDay: getDday(promotion.ends_at),
+    dDay: getPromotionStatusLabel(promotion.starts_at, promotion.ends_at),
     // 서버 is_saved 를 기본으로, 이번 방문 중 바꾼 값이 있으면 그 값
     saved: isSaved(promotion.id, promotion.is_saved),
   };

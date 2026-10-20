@@ -7,7 +7,7 @@ import { getPromotions } from "../../api/promotions";
 import { useSavedPromotions } from "../../store/savedPromotions";
 import todayPromotionIcon from "../../assets/icons/promotion-today.svg";
 import trendingFireIcon from "../../assets/icons/trending-fire.svg";
-import { getDday, getSeoulDayNumber } from "../../utils/date";
+import { getPromotionStatusLabel, getSeoulDayNumber } from "../../utils/date";
 
 const TODAY_FILTERS = ["전체", "진행중", "곧 시작", "오늘 마감"];
 const TODAY_FILTER_PARAMS = {
@@ -24,7 +24,7 @@ function toCardPromotion(promotion, isSaved) {
     title: promotion.title || promotion.benefit || "",
     benefit: promotion.benefit || "",
     image: promotion.image_url || undefined,
-    dDay: getDday(promotion.starts_at, promotion.ends_at),
+    dDay: getPromotionStatusLabel(promotion.starts_at, promotion.ends_at),
     // 서버 is_saved 를 기본으로, 이번 방문 중 바꾼 값이 있으면 그 값
     saved: isSaved(promotion.id, promotion.is_saved),
   };

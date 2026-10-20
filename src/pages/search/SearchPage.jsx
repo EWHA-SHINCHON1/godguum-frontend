@@ -5,7 +5,7 @@ import closeIcon from "../../assets/icons/close.svg";
 import { SearchBar } from "../../components/common";
 import PromotionListCard from "../../components/promotion/PromotionListCard";
 import { getPromotions } from "../../api/promotions";
-import { formatSeoulDate, getDday } from "../../utils/date";
+import { formatSeoulDate, getPromotionStatusLabel } from "../../utils/date";
 
 const RECENT_SEARCHES_STORAGE_KEY = "godguum-recent-searches";
 
@@ -138,7 +138,7 @@ export default function SearchPage() {
         title: promotion.title,
         image: promotion.image_url || undefined,
         period: `${formatSeoulDate(promotion.starts_at)} ~ ${formatSeoulDate(promotion.ends_at)}`,
-        dDay: getDday(promotion.starts_at, promotion.ends_at),
+        dDay: getPromotionStatusLabel(promotion.starts_at, promotion.ends_at),
         saved: promotion.is_saved ?? false,
       })),
     [searchState.results],
