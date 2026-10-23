@@ -20,7 +20,7 @@ import {
 import { ensureLoggedIn, getMe, startKakaoLogin } from "../../api/auth";
 import { getMyCoupon, issueCoupon } from "../../api/coupon";
 import { useSavedPromotions } from "../../store/savedPromotions";
-import { formatSeoulDate, getDday } from "../../utils/date";
+import { formatSeoulDate, getPromotionStatusLabel } from "../../utils/date";
 
 const DETAIL_TABS = [
   { value: "info", label: "프로모션 정보" },
@@ -44,7 +44,7 @@ function toDetail(promotion) {
     storeName: promotion.store.name,
     title: promotion.title,
     period: `${formatSeoulDate(promotion.starts_at)} ~ ${formatSeoulDate(promotion.ends_at)}`,
-    dDay: getDday(promotion.starts_at, promotion.ends_at),
+    dDay: getPromotionStatusLabel(promotion.starts_at, promotion.ends_at),
     status: STATUS_LABEL[promotion.status],
     hasCoupon: promotion.requires_coupon,
   };
