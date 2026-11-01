@@ -1,11 +1,61 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import couponUseCharacter from "../../assets/icons/my/coupon-use-character.svg";
+import benefitIcon from "../../assets/icons/my/coupon-use/benefit.svg";
+import expiryIcon from "../../assets/icons/my/coupon-use/expiry.svg";
+import promotionIcon from "../../assets/icons/my/coupon-use/promotion.svg";
+import storeIcon from "../../assets/icons/my/coupon-use/store.svg";
 import { Header, cn } from "../../components/common";
 import { getMe } from "../../api/auth";
 import { getMyCoupon, redeemCoupon } from "../../api/coupon";
 
 const CODE_LENGTH = 4;
+
+const COUPON_INFO_ROWS = [
+  { key: "store", label: "사용 매장", icon: storeIcon },
+  { key: "promotion", label: "프로모션명", icon: promotionIcon },
+  { key: "benefit", label: "혜택", icon: benefitIcon },
+  { key: "expiry", label: "사용 기한", icon: expiryIcon },
+];
+
+// expires_at은 ISO 형식의 실제 쿠폰 만료 시각이다. 시간대 변환 없이 API가 준 날짜를 표시한다.
+function formatExpiryDate(expiresAt) {
+  if (!expiresAt) return "-";
+
+  const date = String(expiresAt).slice(0, 10);
+  return /^\d{4}-\d{2}-\d{2}$/.test(date) ? date.replaceAll("-", ".") : "-";
+}
+
+function CouponInfoCard({ coupon }) {
+  const values = {
+    store: coupon?.promotion?.store?.name ?? "-",
+    promotion: coupon?.promotion?.title ?? "-",
+    benefit: coupon?.promotion?.benefit ?? "-",
+    expiry: formatExpiryDate(coupon?.expires_at),
+  };
+
+  return (
+    <section aria-label="쿠폰 정보" className="w-full max-w-[330px] rounded-xl border-[0.633px] border-line bg-surface px-[15px] py-[5px]">
+      {COUPON_INFO_ROWS.map(({ key, label, icon }, index) => (
+        <div
+          key={key}
+          className={cn(
+            "flex min-h-[42px] items-center justify-between gap-3 py-[10px]",
+            index < COUPON_INFO_ROWS.length - 1 && "border-b-[0.633px] border-line",
+          )}
+        >
+          <div className="flex shrink-0 items-center gap-2.5 text-button font-medium text-brand-contrast">
+            <img src={icon} alt="" width={23} height={23} />
+            <span>{label}</span>
+          </div>
+          <p className="min-w-0 text-right text-button font-medium break-keep text-fg">
+            {values[key]}
+          </p>
+        </div>
+      ))}
+    </section>
+  );
+}
 
 /**
  * 4-3-3 쿠폰 사용하기 — 매장 직원이 4자리 확인코드(매장 PIN)를 입력한다. (명세서 ⑤-8~10)
@@ -29,6 +79,7 @@ export default function MyCouponUse() {
   // 쿠폰 불러오기 상태: "loading" | "ready" | "notFound" | "error"
   const [pageStatus, setPageStatus] = useState("loading");
   const [retryKey, setRetryKey] = useState(0);
+  const [coupon, setCoupon] = useState(null);
 
   // 입력 칸 아래 빨간 문구 (없으면 "")
   const [errorMessage, setErrorMessage] = useState("");
@@ -67,6 +118,7 @@ export default function MyCouponUse() {
     getMyCoupon(couponId)
       .then((coupon) => {
         if (!isCurrent) return;
+        setCoupon(coupon);
         if (coupon.status !== "available") {
           showBlocked(coupon.status);
         }
@@ -270,7 +322,7 @@ export default function MyCouponUse() {
         className="bg-brand-surface"
       />
 
-      <section className="flex flex-1 flex-col items-center gap-8 bg-brand-weak px-5 pt-[clamp(66px,20dvh,176px)]">
+      <section className="mt-[5px] flex flex-1 flex-col items-center gap-8 overflow-y-auto bg-brand-weak px-5 pt-[99px] pb-8">
         <div className="flex flex-col items-center gap-4">
           <img src={couponUseCharacter} alt="" width={150} height={150} />
           <h2 className="text-center text-head1 font-semibold tracking-[-0.02px] text-fg">
@@ -279,6 +331,8 @@ export default function MyCouponUse() {
             확인코드를 누르게 해주세요
           </h2>
         </div>
+
+        <CouponInfoCard coupon={coupon} />
 
         <div className="flex flex-col items-center gap-3">
           {/* 보이는 칸 4개 + 그 위에 투명한 실제 입력창 하나 */}
@@ -298,8 +352,7 @@ export default function MyCouponUse() {
                     inputDisabled && "opacity-60",
                   )}
                 >
-                  {/* 입력한 숫자 대신 ● 표시 (PIN 이 화면에 그대로 보이지 않게) */}
-                  {code[index] ? "●" : ""}
+                  {code[index] ?? ""}
                 </span>
               );
             })}
