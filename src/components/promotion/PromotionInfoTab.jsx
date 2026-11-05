@@ -4,6 +4,30 @@ import productIcon from "../../assets/icons/promotion/summary-product.svg";
 import priceIcon from "../../assets/icons/promotion/summary-price.svg";
 import conditionIcon from "../../assets/icons/promotion/summary-condition.svg";
 
+const URL_PATTERN = /(https?:\/\/[^\s]+)/g;
+
+function renderDescriptionWithLinks(description) {
+  return description.split(URL_PATTERN).map((part, index) => {
+    if (!part) return null;
+
+    if (/^https?:\/\/[^\s]+$/.test(part)) {
+      return (
+        <a
+          key={`${part}-${index}`}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="break-all underline decoration-from-font underline-offset-2"
+        >
+          {part}
+        </a>
+      );
+    }
+
+    return <span key={`${part}-${index}`}>{part}</span>;
+  });
+}
+
 /**
  * 프로모션 상세 > 프로모션 정보 탭
  * 소개 문구 · 참여 방법 · 프로모션 한눈 요약
@@ -30,8 +54,8 @@ export default function PromotionInfoTab({ promotion }) {
       <div className="flex flex-col items-center gap-10">
         <img src={promotionCharacter} alt="" width={126} height={111} />
         {description && (
-          <p className="text-center text-body2 font-medium tracking-[-0.014px] whitespace-pre-line text-fg">
-            {description}
+          <p className="text-center text-body2 font-medium tracking-[-0.014px] whitespace-pre-wrap text-fg">
+            {renderDescriptionWithLinks(description)}
           </p>
         )}
       </div>
